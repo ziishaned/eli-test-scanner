@@ -9,6 +9,10 @@
     "dev": "nodemon ./src/index.ts"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.6.2",
+    "@types/uuid": "^10.0.0",
     "@types/express": "~5.0.3",
     "@types/morgan": "~1.9.10",
     "@types/pg": "~8.15.5",
@@ -17,9 +21,15 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "image-size": "^2.0.2",
+    "jsqr": "^1.4.0",
     "morgan": "^1.10.1",
-    "pg": "^8.16.3"
+    "multer": "^2.0.2",
+    "pg": "^8.16.3",
+    "sharp": "^0.34.4",
+    "uuid": "^13.0.0"
   }
 }

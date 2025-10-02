@@ -1,27 +1,43 @@
 import "dotenv/config";
 import morgan from "morgan";
-import { postgres } from "./db";
 import express, { Request, Response } from "express";
+import cors from "cors";
+import path from "path";
+import { testConnection } from "./database";
+import testStripRoutes from "./routes/testStripRoutes";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 const app = express();
 
+// Test database connection on startup
+testConnection();
+
+// Middleware
+app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.post("/api/test-strips/upload", (req: Request, res: Response) => {
-  res.send("Hello World!");
+// Serve static files (uploaded images and thumbnails)
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// Routes
+app.use("/api/test-strips", testStripRoutes);
+
+// Health check endpoint
+app.get("/health", (req: Request, res: Response) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-app.get("/api/test-strips", async (req: Request, res: Response) => {
-  res.json("Hello World!");
-});
+// 404 handler
+app.use(notFoundHandler);
 
-app.get("/api/test-strips/:id", async (req: Request, res: Response) => {
-  res.json("Hello World!");
-});
+// Global error handler
+app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
