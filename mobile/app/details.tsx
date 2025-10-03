@@ -154,43 +154,34 @@ export default function DetailsScreen() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.dataContainer}>
+          <View style={styles.detailsContainer}>
             <Text style={styles.qrCode}>
               {eliCodeToLabelMap[submissionData.qr_code] ??
                 eliCodeToLabelMap["No QR Code"]}
             </Text>
-
-            <View style={styles.imageInfoRow}>
-              <Text style={styles.imageInfoText}>
-                {submissionData.image_dimensions}
-              </Text>
-              <Text style={styles.imageInfoText}>
-                {formatFileSize(submissionData.image_size)}
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>QR code</Text>
+              <Text style={styles.detailValue}>
+                {submissionData.qr_code ?? "-"}
               </Text>
             </View>
-
-            {/* Details without ID */}
-            <View style={styles.detailsContainer}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Created</Text>
-                <Text style={styles.detailValue}>
-                  {formatDate(submissionData.created_at)}
-                </Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>File</Text>
-                <Text style={styles.detailValue} numberOfLines={1}>
-                  {submissionData.original_image_path}
-                </Text>
-              </View>
-              {submissionData.error_message && (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Error</Text>
-                  <Text style={[styles.detailValue, { color: "#F44336" }]}>
-                    {submissionData.error_message}
-                  </Text>
-                </View>
-              )}
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Created</Text>
+              <Text style={styles.detailValue}>
+                {formatDate(submissionData.created_at)}
+              </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Dimensions</Text>
+              <Text style={styles.detailValue}>
+                {submissionData.image_dimensions}
+              </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Size</Text>
+              <Text style={styles.detailValue}>
+                {formatFileSize(submissionData.image_size)}
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -261,7 +252,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: width,
-    height: 180,
+    height: 292,
     backgroundColor: "white",
     resizeMode: "contain",
     zIndex: 1,
@@ -335,6 +326,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     gap: 12,
+    paddingHorizontal: 16,
   },
   detailRow: {
     flexDirection: "row",
