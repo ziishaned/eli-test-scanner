@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres:15
@@ -15,8 +15,12 @@ services:
     build: ./backend
     environment:
       PORT: 3000
-      DATABASE_URL: postgresql://eli_user:eli_password@postgres:5432/eli_test_strips
       NODE_ENV: development
+      DB_USER: eli_user
+      DB_PASSWORD: eli_password
+      DB_NAME: eli_test_strips
+      DB_HOST: postgres
+      DB_PORT: 5432
     ports:
       - "3000:3000"
     volumes:
