@@ -13,6 +13,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { DateTime } from "luxon";
+import { eliCodeToLabelMap } from "../src/constants";
 
 const { width } = Dimensions.get("window");
 
@@ -142,50 +143,23 @@ export default function DetailsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Full Width Image - Absolute positioned */}
       <Image
-        source={{ uri: submissionData.originalImageUrl }}
-        style={styles.submissionImage}
         contentFit="contain"
+        style={styles.submissionImage}
+        source={{ uri: submissionData.originalImageUrl }}
       />
 
-      {/* Details Section */}
       <View style={styles.detailsSection}>
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.dataContainer}>
-            {/* QR Code */}
-            <View style={styles.qrCodeContainer}>
-              <Text style={styles.qrCode}>{submissionData.qr_code}</Text>
-              <View style={styles.qrIconContainer}>
-                <Ionicons name="qr-code" size={20} color="#007AFF" />
-              </View>
-            </View>
+            <Text style={styles.qrCode}>
+              {eliCodeToLabelMap[submissionData.qr_code] ??
+                eliCodeToLabelMap["No QR Code"]}
+            </Text>
 
-            {/* Status */}
-            <View style={styles.statusRow}>
-              <View style={styles.statusBadge}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    { backgroundColor: getStatusColor(submissionData.status) },
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: getStatusColor(submissionData.status) },
-                  ]}
-                >
-                  {submissionData.status.charAt(0).toUpperCase() +
-                    submissionData.status.slice(1)}
-                </Text>
-              </View>
-            </View>
-
-            {/* Image Info */}
             <View style={styles.imageInfoRow}>
               <Text style={styles.imageInfoText}>
                 {submissionData.image_dimensions}
@@ -323,11 +297,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     fontFamily: "monospace",
-  },
-  qrIconContainer: {
-    backgroundColor: "#e3f2fd",
-    padding: 8,
-    borderRadius: 6,
   },
   statusRow: {
     flexDirection: "row",

@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { DateTime } from "luxon";
 import { Submission, SubmissionStatus } from "./types";
+import { eliCodeToLabelMap, statusLabelMap } from "../src/constants";
 
 const { width } = Dimensions.get("window");
 
@@ -84,19 +85,6 @@ export default function Index() {
     setHasNextPage(true);
     await loadSubmissions(1, false);
     setRefreshing(false);
-  };
-
-  const eliCodeToLabelMap = {
-    "ELI-2025-001": "Valid Test Strip 1",
-    "ELI-2025-002": "Valid Test Strip 2",
-    "ELI-2024-999": "Expired Test Strip",
-    "No QR Code": "Invalid Test Strip",
-  };
-
-  const statusLabelMap = {
-    valid: "Valid",
-    invalid: "Invalid",
-    expired: "Expired",
   };
 
   const renderSubmissionItem = ({ item }: { item: any }) => {
