@@ -4,7 +4,7 @@ A monorepo containing backend API and mobile application for scanning and proces
 
 ## Demo
 
-<img src="https://i.imgur.com/1LEhxho.gif" width="300px" />
+<img src="https://media.giphy.com/media/Z1yHiMUUn06SB2joeb/giphy.gif" />
 
 ## Screenshots
 
