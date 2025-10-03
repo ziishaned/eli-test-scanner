@@ -14,9 +14,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { eliCodeToLabelMap, statusLabelMap } from "../constants";
 import { formatDate } from "../src/utils/formatters";
+import { getTestStrips, SubmissionData } from "../src/api/test-strips";
 
 export default function Index() {
-  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,24 +37,16 @@ export default function Index() {
         setLoading(true);
       }
 
-      const res = await fetch(
-        `https://0e251d280bf8.ngrok-free.app/api/test-strips?page=${pageNum}&limit=20`
-      );
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const resJSON = await res.json();
+      const result = await getTestStrips(pageNum, 20);
 
       if (append) {
-        setSubmissions((prev) => [...prev, ...resJSON.data]);
+        setSubmissions((prev) => [...prev, ...result.data]);
       } else {
-        setSubmissions(resJSON.data);
+        setSubmissions(result.data);
       }
 
-      setPage(resJSON.pagination.page);
-      setHasNextPage(resJSON.pagination.page < resJSON.pagination.total_pages);
+      setPage(result.pagination.page);
+      setHasNextPage(result.pagination.page < result.pagination.total_pages);
       setIsOffline(false);
     } catch (error) {
       console.error("Failed to load submissions:", error);
@@ -82,7 +75,7 @@ export default function Index() {
     setRefreshing(false);
   };
 
-  const renderSubmissionItem = ({ item }: { item: any }) => {
+  const renderSubmissionItem = ({ item }: { item: SubmissionData }) => {
     return (
       <TouchableOpacity
         style={styles.submissionItem}
