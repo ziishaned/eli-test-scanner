@@ -1,0 +1,12 @@
+{
+  "name": "eli-test-scanner",
+  "version": "1.0.0",
+  "repository": "git@github.com:ziishaned/eli-test-scanner.git",
+  "author": "Zeeshan Ahmad <ziishaned@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "mobile",
+    "backend"
+  ]
+}
