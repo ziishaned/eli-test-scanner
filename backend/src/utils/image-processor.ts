@@ -51,9 +51,10 @@ const generateThumbnail = async (imagePath: string): Promise<string> => {
   );
 
   await sharp(imagePath)
+    .rotate()
     .resize(thumbnailSize, thumbnailSize, {
-      fit: "cover",
-      position: "center",
+      fit: "inside",
+      withoutEnlargement: true,
     })
     .jpeg({ quality: 80 })
     .toFile(thumbnailPath);
