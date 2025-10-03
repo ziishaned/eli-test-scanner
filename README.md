@@ -1,6 +1,6 @@
 # ELI Test Scanner
 
-A mobile application for scanning and processing ELI test strips with QR code detection and image analysis.
+A monorepo containing backend API and mobile application for scanning and processing ELI test strips with QR code detection and image analysis.
 
 ## Prerequisites
 
