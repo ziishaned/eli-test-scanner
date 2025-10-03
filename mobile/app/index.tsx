@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { DateTime } from "luxon";
 import { Submission, SubmissionStatus, Quality } from "./types";
 
 const { width } = Dimensions.get("window");
@@ -27,30 +28,30 @@ export default function Index() {
     {
       id: "1",
       imageUri: "https://placehold.jp/200x200.png",
-      timestamp: new Date("2024-10-01T10:30:00"),
+      timestamp: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
       qrCode: "QR12345",
       qrCodeValid: true,
       status: "completed",
       quality: "good",
-      processedAt: new Date("2024-10-01T10:30:00"),
+      processedAt: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
     },
     {
       id: "2",
       imageUri: "https://placehold.jp/200x200.png",
-      timestamp: new Date("2024-10-01T09:15:00"),
+      timestamp: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
       status: "qr_not_found",
       quality: "poor",
-      processedAt: new Date("2024-10-01T09:15:00"),
+      processedAt: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
     },
     {
       id: "3",
       imageUri: "https://placehold.jp/200x200.png",
-      timestamp: new Date("2024-09-30T16:45:00"),
+      timestamp: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
       qrCode: "EXPIRED123",
       qrCodeValid: false,
       status: "qr_expired",
       quality: "good",
-      processedAt: new Date("2024-09-30T16:45:00"),
+      processedAt: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
     },
   ];
 
@@ -146,14 +147,7 @@ export default function Index() {
   };
 
   const formatTimestamp = (timestamp: Date) => {
-    return (
-      timestamp.toLocaleDateString() +
-      " " +
-      timestamp.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
+    return DateTime.fromJSDate(timestamp).toRelative();
   };
 
   const renderSubmissionItem = ({ item }: { item: Submission }) => {
