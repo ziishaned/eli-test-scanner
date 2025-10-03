@@ -22,93 +22,85 @@ export default function Index() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
-
-  // Mock data for demonstration - replace with actual API calls
-  const mockSubmissions: Submission[] = [
-    {
-      id: "1",
-      imageUri: "https://placehold.jp/200x200.png",
-      timestamp: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
-      qrCode: "ELI-2025-001",
-      qrCodeValid: true,
-      status: "completed",
-      quality: "basic brightness",
-      processedAt: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
-    },
-    {
-      id: "2",
-      imageUri: "https://placehold.jp/200x200.png",
-      timestamp: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
-      qrCode: "ELI-2025-002",
-      qrCodeValid: true,
-      status: "completed",
-      quality: "blur detection",
-      processedAt: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
-    },
-    {
-      id: "3",
-      imageUri: "https://placehold.jp/200x200.png",
-      timestamp: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
-      qrCode: "ELI-2024-999",
-      qrCodeValid: false,
-      status: "qr_expired",
-      quality: "basic brightness",
-      processedAt: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
-    },
-    {
-      id: "4",
-      imageUri: "https://placehold.jp/200x200.png",
-      timestamp: DateTime.fromISO("2024-09-30T14:20:00").toJSDate(),
-      status: "qr_not_found",
-      quality: "failed",
-      processedAt: DateTime.fromISO("2024-09-30T14:20:00").toJSDate(),
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
 
   useEffect(() => {
     loadSubmissions();
   }, []);
 
-  const loadSubmissions = async () => {
+  const loadSubmissions = async (
+    pageNum: number = 1,
+    append: boolean = false
+  ) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSubmissions(mockSubmissions);
+      if (!append) {
+        setLoading(true);
+      }
+
+      const res = await fetch(
+        `http://localhost:3000/api/test-strips?page=${pageNum}&limit=20`
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const resJSON = await res.json();
+
+      // Transform the API response to match our Submission type
+      const transformedSubmissions: Submission[] = resJSON.data.map(
+        (item: any) => ({
+          id: item.id,
+          imageUri: item.thumbnail_url
+            ? `http://localhost:3000${item.thumbnail_url}`
+            : undefined,
+          timestamp: new Date(item.created_at),
+          qrCode: item.qr_code,
+          qrCodeValid: item.qr_code ? item.status === "completed" : false,
+          status: item.status,
+          quality: item.quality,
+          processedAt: new Date(item.created_at),
+        })
+      );
+
+      if (append) {
+        setSubmissions((prev) => [...prev, ...transformedSubmissions]);
+      } else {
+        setSubmissions(transformedSubmissions);
+      }
+
+      // Update pagination state
+      setPage(resJSON.pagination.page);
+      setHasNextPage(resJSON.pagination.page < resJSON.pagination.total_pages);
       setIsOffline(false);
     } catch (error) {
       console.error("Failed to load submissions:", error);
       setIsOffline(true);
       Alert.alert(
         "Error",
-        "Failed to load submissions. Please check your connection."
+        "Failed to load submissions. Please check your connection and make sure the backend server is running."
       );
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const loadMoreSubmissions = async () => {
+    if (!hasNextPage || loading) return;
+
+    setLoading(true);
+    await loadSubmissions(page + 1, true);
   };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadSubmissions();
+    setPage(1);
+    setHasNextPage(true);
+    await loadSubmissions(1, false);
     setRefreshing(false);
   }, []);
-
-  const getStatusIcon = (status: SubmissionStatus) => {
-    switch (status) {
-      case "completed":
-        return <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />;
-      case "processing":
-        return <Ionicons name="time-outline" size={24} color="#FF9800" />;
-      case "failed":
-        return <Ionicons name="alert-circle" size={24} color="#F44336" />;
-      case "qr_not_found":
-        return <Ionicons name="scan-outline" size={24} color="#FF9800" />;
-      case "qr_invalid":
-        return <Ionicons name="close-circle" size={24} color="#F44336" />;
-      case "qr_expired":
-        return <Ionicons name="time" size={24} color="#FF5722" />;
-      default:
-        return <Ionicons name="help-circle" size={24} color="#9E9E9E" />;
-    }
-  };
 
   const getQRCodeStatus = (submission: Submission) => {
     const { status, qrCode, qrCodeValid } = submission;
@@ -154,10 +146,6 @@ export default function Index() {
     }
 
     return { icon: "scan-outline", color: "#9E9E9E", text: "Unknown Status" };
-  };
-
-  const formatTimestamp = (timestamp: Date) => {
-    return DateTime.fromJSDate(timestamp).toRelative();
   };
 
   const renderSubmissionItem = ({ item }: { item: Submission }) => {
@@ -216,18 +204,49 @@ export default function Index() {
     );
   };
 
+  const renderFooter = () => {
+    if (!hasNextPage && !loading) return null;
+
+    if (loading) {
+      return (
+        <View style={styles.footerLoader}>
+          <Text style={styles.footerText}>Loading more...</Text>
+        </View>
+      );
+    }
+
+    if (hasNextPage) {
+      return (
+        <View style={styles.footerLoader}>
+          <TouchableOpacity
+            style={styles.loadMoreButton}
+            onPress={loadMoreSubmissions}
+            disabled={loading}
+          >
+            <Text style={styles.loadMoreButtonText}>Load more</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   if (isOffline) {
     return (
-      <>
+      <View style={styles.offlineContainer}>
         <Ionicons name="wifi-outline" size={64} color="#9E9E9E" />
         <Text style={styles.offlineText}>You're offline</Text>
         <Text style={styles.offlineSubtext}>
           Please check your internet connection and try again
         </Text>
-        <TouchableOpacity style={styles.retryButton} onPress={loadSubmissions}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => loadSubmissions()}
+        >
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
-      </>
+      </View>
     );
   }
 
@@ -240,6 +259,7 @@ export default function Index() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        ListFooterComponent={renderFooter}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -387,10 +407,10 @@ const styles = StyleSheet.create({
   },
   offlineContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
     paddingHorizontal: 32,
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
   },
   offlineText: {
     fontSize: 20,
@@ -434,5 +454,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 8,
+  },
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  footerText: {
+    color: "#666",
+    fontSize: 14,
+  },
+  loadMoreButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  loadMoreButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
