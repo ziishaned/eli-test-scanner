@@ -68,8 +68,7 @@ The backend API will be available at `http://localhost:3000`
 # Connect to the PostgreSQL container
 docker exec -it eli-test-scanner-postgres-1 psql -U eli_user -d eli_test_strips
 
-# Run the schema (copy and paste the contents of backend/schema.sql)
-# Or run it directly:
+# Run the schema
 docker exec -i eli-test-scanner-postgres-1 psql -U eli_user -d eli_test_strips < backend/schema.sql
 ```
 
