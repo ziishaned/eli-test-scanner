@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { DateTime } from "luxon";
 import { eliCodeToLabelMap } from "../src/constants";
+import { StatusBar } from "expo-status-bar";
 
 const { width } = Dimensions.get("window");
 
@@ -88,6 +89,7 @@ export default function DetailsScreen() {
   if (loading) {
     return (
       <View style={styles.centerContainer}>
+        <StatusBar style="dark" />
         <ActivityIndicator size="large" color="#007AFF" />
         <Text style={styles.loadingText}>Loading submission details...</Text>
       </View>
@@ -97,6 +99,7 @@ export default function DetailsScreen() {
   if (error || !submissionData) {
     return (
       <View style={styles.centerContainer}>
+        <StatusBar style="dark" />
         <Ionicons name="alert-circle-outline" size={64} color="#F44336" />
         <Text style={styles.errorText}>Failed to load submission</Text>
         <Text style={styles.errorSubtext}>
@@ -128,21 +131,9 @@ export default function DetailsScreen() {
     return DateTime.fromISO(dateString).toFormat("MMM dd, yyyy 'at' h:mm a");
   };
 
-  const getStatusColor = (status: string): string => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "#4CAF50";
-      case "processing":
-        return "#FF9800";
-      case "failed":
-        return "#F44336";
-      default:
-        return "#666";
-    }
-  };
-
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <Image
         contentFit="contain"
         style={styles.submissionImage}

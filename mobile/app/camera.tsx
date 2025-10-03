@@ -15,6 +15,7 @@ import {
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 const { width } = Dimensions.get("window");
 
@@ -148,6 +149,7 @@ export default function CameraScreen() {
 
   return (
     <View style={[styles.container, capturedImage && styles.previewContainer]}>
+      <StatusBar style="dark" />
       {capturedImage ? (
         <View style={{ flex: 1 }}>
           <View style={styles.imageContainer}>
