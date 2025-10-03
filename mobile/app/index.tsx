@@ -195,7 +195,7 @@ export default function Index() {
 
   if (isOffline) {
     return (
-      <SafeAreaView style={styles.offlineContainer}>
+      <>
         <Ionicons name="wifi-outline" size={64} color="#9E9E9E" />
         <Text style={styles.offlineText}>You're offline</Text>
         <Text style={styles.offlineSubtext}>
@@ -204,12 +204,12 @@ export default function Index() {
         <TouchableOpacity style={styles.retryButton} onPress={loadSubmissions}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <FlatList
         data={submissions}
         renderItem={renderSubmissionItem}
@@ -236,7 +236,7 @@ export default function Index() {
       >
         <Ionicons name="camera" size={28} color="white" />
       </TouchableOpacity>
-    </SafeAreaView>
+    </>
   );
 }
 
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: "absolute",
-    bottom: 30,
+    bottom: 40,
     right: 20,
     width: 60,
     height: 60,
