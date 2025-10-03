@@ -7,7 +7,6 @@ import {
   Alert,
   Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Camera,
   useCameraDevice,
@@ -29,20 +28,18 @@ export default function CameraScreen() {
   const device = useCameraDevice(cameraPosition);
 
   if (!device) {
-    // Camera device is not available
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Loading camera...</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!hasPermission) {
-    // Camera permissions are not granted yet
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.permissionContainer}>
           <Ionicons name="camera-outline" size={64} color="#9E9E9E" />
           <Text style={styles.permissionText}>
@@ -55,7 +52,7 @@ export default function CameraScreen() {
             <Text style={styles.permissionButtonText}>Grant Camera Access</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -69,7 +66,6 @@ export default function CameraScreen() {
         const photo = await cameraRef.current.takePhoto();
 
         if (photo) {
-          // Set the captured image to show preview
           setCapturedImage(
             photo.path.startsWith("file://")
               ? photo.path
@@ -85,8 +81,6 @@ export default function CameraScreen() {
 
   const handleSubmit = async () => {
     try {
-      // Here you would typically upload the image to your backend
-      // For now, we'll just simulate the submission
       Alert.alert(
         "Submitting...",
         "Your test strip photo is being processed.",
@@ -94,7 +88,6 @@ export default function CameraScreen() {
           {
             text: "OK",
             onPress: () => {
-              // Navigate back to home screen
               router.replace("./");
             },
           },
@@ -107,47 +100,25 @@ export default function CameraScreen() {
   };
 
   const handleRetake = () => {
-    // Clear the captured image to go back to camera view
     setCapturedImage(null);
   };
 
   const handleClose = () => {
-    // Discard the image and go back to home
     router.replace("./");
   };
 
   return (
     <View style={[styles.container, capturedImage && styles.previewContainer]}>
       {capturedImage ? (
-        // Preview Mode
-        <SafeAreaView style={{ flex: 1 }}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.headerButton} onPress={handleClose}>
-              <Ionicons name="close" size={28} color="#333" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Preview</Text>
-            <View style={styles.headerButton} />
-          </View>
-
-          {/* Image Preview */}
+        <View style={{ flex: 1 }}>
           <View style={styles.imageContainer}>
             <Image
               source={{ uri: capturedImage }}
-              style={styles.previewImage}
+              style={[styles.previewImage, { borderRadius: 12 }]}
               contentFit="contain"
             />
           </View>
 
-          {/* Instructions */}
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.instructionsText}>
-              Please review the captured image. Make sure the test strip is
-              clearly visible and well-lit.
-            </Text>
-          </View>
-
-          {/* Action Buttons */}
           <View style={styles.actionsContainer}>
             <TouchableOpacity
               style={styles.secondaryButton}
@@ -165,9 +136,8 @@ export default function CameraScreen() {
               <Text style={styles.primaryButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
-        </SafeAreaView>
+        </View>
       ) : (
-        // Camera Mode
         <View style={styles.cameraContainer}>
           <View style={styles.cameraViewContainer}>
             <Camera
@@ -177,7 +147,6 @@ export default function CameraScreen() {
               isActive={true}
               photo={true}
             >
-              {/* Top Controls */}
               <View style={styles.topControls}>
                 <TouchableOpacity
                   style={styles.topButton}
@@ -194,7 +163,6 @@ export default function CameraScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Camera Frame Overlay */}
               <View style={styles.frameOverlay}>
                 <View style={styles.frame} />
                 <Text style={styles.frameText}>
@@ -204,7 +172,6 @@ export default function CameraScreen() {
             </Camera>
           </View>
 
-          {/* Bottom Controls - Outside Camera */}
           <View style={styles.bottomControlsArea}>
             <View style={styles.bottomControls}>
               <TouchableOpacity
@@ -353,60 +320,20 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: "white",
   },
-  // Preview styles
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  headerButton: {
-    width: 44,
-    height: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-  },
   imageContainer: {
     flex: 1,
-    margin: 16,
-    backgroundColor: "white",
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
   },
   previewImage: {
     width: "100%",
     height: "100%",
   },
-  instructionsContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  instructionsText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 20,
-  },
   actionsContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 24,
     gap: 12,
   },
