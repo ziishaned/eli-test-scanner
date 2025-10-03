@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    width: width,
+    width,
     height: 292,
     backgroundColor: "white",
     resizeMode: "contain",
