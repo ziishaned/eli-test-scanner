@@ -19,7 +19,7 @@ import { Submission, SubmissionStatus, Quality } from "./types";
 const { width } = Dimensions.get("window");
 
 export default function Index() {
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,26 +49,10 @@ export default function Index() {
 
       const resJSON = await res.json();
 
-      // Transform the API response to match our Submission type
-      const transformedSubmissions: Submission[] = resJSON.data.map(
-        (item: any) => ({
-          id: item.id,
-          imageUri: item.thumbnail_url
-            ? `http://localhost:3000${item.thumbnail_url}`
-            : undefined,
-          timestamp: new Date(item.created_at),
-          qrCode: item.qr_code,
-          qrCodeValid: item.qr_code ? item.status === "completed" : false,
-          status: item.status,
-          quality: item.quality,
-          processedAt: new Date(item.created_at),
-        })
-      );
-
       if (append) {
-        setSubmissions((prev) => [...prev, ...transformedSubmissions]);
+        setSubmissions((prev) => [...prev, ...resJSON.data]);
       } else {
-        setSubmissions(transformedSubmissions);
+        setSubmissions(resJSON.data);
       }
 
       // Update pagination state
@@ -94,16 +78,17 @@ export default function Index() {
     await loadSubmissions(page + 1, true);
   };
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
     setPage(1);
     setHasNextPage(true);
     await loadSubmissions(1, false);
     setRefreshing(false);
-  }, []);
+  };
 
-  const getQRCodeStatus = (submission: Submission) => {
-    const { status, qrCode, qrCodeValid } = submission;
+  const getQRCodeStatus = (submission: any) => {
+    const { status, qr_code } = submission;
+    const qrCodeValid = qr_code && status === "completed";
 
     if (status === "processing") {
       return { icon: "scan-outline", color: "#9E9E9E", text: "Processing..." };
@@ -137,18 +122,18 @@ export default function Index() {
       };
     }
 
-    if (qrCode && qrCodeValid) {
+    if (qr_code && qrCodeValid) {
       return {
         icon: "qr-code",
         color: "#4CAF50",
-        text: `QR: ${qrCode}`,
+        text: `QR: ${qr_code}`,
       };
     }
 
     return { icon: "scan-outline", color: "#9E9E9E", text: "Unknown Status" };
   };
 
-  const renderSubmissionItem = ({ item }: { item: Submission }) => {
+  const renderSubmissionItem = ({ item }: { item: any }) => {
     const qrStatus = getQRCodeStatus(item);
 
     return (
@@ -156,7 +141,14 @@ export default function Index() {
         style={styles.submissionItem}
         onPress={() => router.push(`/details?id=${item.id}` as any)}
       >
-        <Image source={{ uri: item.imageUri }} style={styles.thumbnail} />
+        <Image
+          source={{
+            uri: item.thumbnail_url
+              ? `http://localhost:3000${item.thumbnail_url}`
+              : undefined,
+          }}
+          style={styles.thumbnail}
+        />
 
         <View style={styles.submissionInfo}>
           <View style={styles.qrCodeMainRow}>
@@ -166,19 +158,22 @@ export default function Index() {
               color={qrStatus.color}
             />
             <Text style={[styles.qrCodeMainText, { color: qrStatus.color }]}>
-              {item.qrCode ? item.qrCode : "No QR code"}
+              {item.qr_code ? item.qr_code : "No QR code"}
             </Text>
           </View>
 
-          {item.qrCode && (
+          {item.qr_code && (
             <View style={styles.statusDetailRow}>
               <Text style={styles.statusText}>
-                Status: {item.qrCodeValid ? "Valid" : "Expired"}
+                Status:{" "}
+                {item.qr_code && item.status === "completed"
+                  ? "Valid"
+                  : "Expired"}
               </Text>
             </View>
           )}
 
-          {item.qrCode && (
+          {item.qr_code && (
             <View style={styles.qualityRow}>
               <Text style={styles.qualityText}>
                 Quality:{" "}
@@ -189,11 +184,11 @@ export default function Index() {
             </View>
           )}
 
-          {item.processedAt && (
+          {item.created_at && (
             <View style={styles.processedRow}>
               <Text style={styles.processedText}>
                 Processed:{" "}
-                {DateTime.fromJSDate(item.processedAt).toLocaleString(
+                {DateTime.fromJSDate(new Date(item.created_at)).toLocaleString(
                   DateTime.DATETIME_SHORT
                 )}
               </Text>
