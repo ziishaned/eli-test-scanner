@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "prod": "node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts",
+    "prod": "NODE_ENV=production node ./dist/index.js",
+    "dev": "NODE_ENV=development nodemon ./src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
