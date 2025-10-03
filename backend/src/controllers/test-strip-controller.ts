@@ -37,7 +37,13 @@ export const uploadTestStrip = async (
       error_message: processingResult.qrCode?.errorMessage,
     });
 
-    res.status(201).json(submission);
+    res.status(201).json({
+      ...submission,
+      originalImageUrl: `/uploads/${submission.original_image_path}`,
+      thumbnailUrl: submission.thumbnail_path
+        ? `/uploads/${submission.thumbnail_path}`
+        : null,
+    });
   } catch (error) {
     res.status(500).json({
       error: "Internal server error during image processing",
