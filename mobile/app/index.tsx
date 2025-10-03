@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Submission, QRCodeData } from "./types";
+import { Submission, SubmissionStatus, Quality } from "./types";
 
 const { width } = Dimensions.get("window");
 
@@ -28,22 +28,29 @@ export default function Index() {
       id: "1",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-10-01T10:30:00"),
-      qrCode: { detected: true, content: "QR12345", confidence: 0.95 },
-      status: "processed",
+      qrCode: "QR12345",
+      qrCodeValid: true,
+      status: "completed",
+      quality: "good",
+      processedAt: new Date("2024-10-01T10:30:00"),
     },
     {
       id: "2",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-10-01T09:15:00"),
-      qrCode: { detected: false },
-      status: "processed",
+      status: "qr_not_found",
+      quality: "poor",
+      processedAt: new Date("2024-10-01T09:15:00"),
     },
     {
       id: "3",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-09-30T16:45:00"),
-      qrCode: null,
-      status: "pending",
+      qrCode: "EXPIRED123",
+      qrCodeValid: false,
+      status: "qr_expired",
+      quality: "good",
+      processedAt: new Date("2024-09-30T16:45:00"),
     },
   ];
 
@@ -73,37 +80,69 @@ export default function Index() {
     setRefreshing(false);
   }, []);
 
-  const getStatusIcon = (status: Submission["status"]) => {
+  const getStatusIcon = (status: SubmissionStatus) => {
     switch (status) {
-      case "processed":
+      case "completed":
         return <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />;
-      case "pending":
+      case "processing":
         return <Ionicons name="time-outline" size={24} color="#FF9800" />;
-      case "error":
+      case "failed":
         return <Ionicons name="alert-circle" size={24} color="#F44336" />;
+      case "qr_not_found":
+        return <Ionicons name="scan-outline" size={24} color="#FF9800" />;
+      case "qr_invalid":
+        return <Ionicons name="close-circle" size={24} color="#F44336" />;
+      case "qr_expired":
+        return <Ionicons name="time" size={24} color="#FF5722" />;
       default:
         return <Ionicons name="help-circle" size={24} color="#9E9E9E" />;
     }
   };
 
-  const getQRCodeStatus = (qrCode: QRCodeData | null) => {
-    if (!qrCode) {
+  const getQRCodeStatus = (submission: Submission) => {
+    const { status, qrCode, qrCodeValid } = submission;
+
+    if (status === "processing") {
       return { icon: "scan-outline", color: "#9E9E9E", text: "Processing..." };
     }
 
-    if (qrCode.detected) {
-      return {
-        icon: "qr-code",
-        color: "#4CAF50",
-        text: `QR: ${qrCode.content}`,
-      };
-    } else {
+    if (status === "qr_not_found") {
       return {
         icon: "scan-outline",
         color: "#F44336",
-        text: "No QR Code",
+        text: "No QR Code Found",
       };
     }
+
+    if (status === "qr_invalid") {
+      return {
+        icon: "close-circle",
+        color: "#F44336",
+        text: "Invalid QR Code",
+      };
+    }
+
+    if (status === "qr_expired") {
+      return { icon: "time", color: "#FF5722", text: "QR Code Expired" };
+    }
+
+    if (status === "failed") {
+      return {
+        icon: "alert-circle",
+        color: "#F44336",
+        text: "Processing Failed",
+      };
+    }
+
+    if (qrCode && qrCodeValid) {
+      return {
+        icon: "qr-code",
+        color: "#4CAF50",
+        text: `QR: ${qrCode}`,
+      };
+    }
+
+    return { icon: "scan-outline", color: "#9E9E9E", text: "Unknown Status" };
   };
 
   const formatTimestamp = (timestamp: Date) => {
@@ -118,7 +157,7 @@ export default function Index() {
   };
 
   const renderSubmissionItem = ({ item }: { item: Submission }) => {
-    const qrStatus = getQRCodeStatus(item.qrCode);
+    const qrStatus = getQRCodeStatus(item);
 
     return (
       <TouchableOpacity style={styles.submissionItem}>
@@ -143,11 +182,12 @@ export default function Index() {
             </Text>
           </View>
 
-          {item.qrCode?.confidence && (
-            <Text style={styles.confidenceText}>
-              Confidence: {Math.round(item.qrCode.confidence * 100)}%
+          <View style={styles.qualityRow}>
+            <Text style={styles.qualityText}>
+              Quality:{" "}
+              {item.quality.charAt(0).toUpperCase() + item.quality.slice(1)}
             </Text>
-          )}
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -252,6 +292,14 @@ const styles = StyleSheet.create({
   qrText: {
     marginLeft: 6,
     fontSize: 14,
+    fontWeight: "500",
+  },
+  qualityRow: {
+    marginTop: 4,
+  },
+  qualityText: {
+    fontSize: 12,
+    color: "#666",
     fontWeight: "500",
   },
   confidenceText: {

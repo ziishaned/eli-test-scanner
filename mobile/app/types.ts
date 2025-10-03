@@ -1,20 +1,29 @@
-export interface QRCodeData {
-  detected: boolean;
-  content?: string;
-  confidence?: number;
-}
+export type SubmissionStatus =
+  | "processing"
+  | "completed"
+  | "failed"
+  | "qr_not_found"
+  | "qr_invalid"
+  | "qr_expired";
+
+export type Quality = "good" | "poor" | "failed";
 
 export interface Submission {
   id: string;
   imageUri: string;
   timestamp: Date;
-  qrCode: QRCodeData | null;
-  status: "pending" | "processed" | "error";
+  qrCode?: string;
+  qrCodeValid?: boolean;
+  status: SubmissionStatus;
+  quality: Quality;
+  processedAt: Date;
 }
 
 export interface SubmissionResponse {
   id: string;
-  qrCode: QRCodeData;
-  status: "processed" | "error";
-  message?: string;
+  status: SubmissionStatus;
+  qrCode?: string;
+  qrCodeValid?: boolean;
+  quality: Quality;
+  processedAt: Date;
 }
