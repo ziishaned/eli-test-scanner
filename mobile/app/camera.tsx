@@ -16,7 +16,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 export default function CameraScreen() {
   const [cameraPosition, setCameraPosition] = useState<"back" | "front">(
@@ -124,7 +124,6 @@ export default function CameraScreen() {
               style={styles.secondaryButton}
               onPress={handleRetake}
             >
-              <Ionicons name="camera" size={20} color="#007AFF" />
               <Text style={styles.secondaryButtonText}>Retake</Text>
             </TouchableOpacity>
 
@@ -132,7 +131,6 @@ export default function CameraScreen() {
               style={styles.primaryButton}
               onPress={handleSubmit}
             >
-              <Ionicons name="checkmark" size={20} color="white" />
               <Text style={styles.primaryButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -345,7 +343,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 16,
     borderRadius: 12,
-    gap: 8,
   },
   primaryButtonText: {
     color: "white",
@@ -362,7 +359,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#007AFF",
-    gap: 8,
   },
   secondaryButtonText: {
     color: "#007AFF",
