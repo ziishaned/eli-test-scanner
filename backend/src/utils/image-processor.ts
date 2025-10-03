@@ -3,7 +3,7 @@ import path from "path";
 import sharp from "sharp";
 import sizeOf from "image-size";
 import { promises as fs } from "fs";
-import { ImageProcessingResult, QRCodeData } from "@/src/types";
+import { ImageProcessingResult, QRCodeData } from "../types";
 
 const thumbnailSize = 200;
 

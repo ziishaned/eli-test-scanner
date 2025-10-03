@@ -1,11 +1,11 @@
-import { pool } from "@/src/database";
+import { pool } from "../database";
 import {
   TestStripSubmission,
   SubmissionStatus,
   PaginationParams,
   PaginatedResponse,
   TestStripListItem,
-} from "@/src/types";
+} from "../types";
 
 export const createTestStrip = async (data: {
   qr_code?: string;

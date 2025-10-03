@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { processImage, validateImageFile } from "@/src/utils/image-processor";
+import { processImage, validateImageFile } from "../utils/image-processor";
 import {
   createTestStrip,
   findAllTestStrips,
   findTestStripById,
-} from "@/src/models/test-strip-model";
+} from "../models/test-strip-model";
 
 export const uploadTestStrip = async (
   req: Request,
