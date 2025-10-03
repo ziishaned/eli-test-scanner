@@ -96,42 +96,26 @@ export default function Index() {
     }
 
     if (status === "qr_not_found") {
-      return {
-        icon: "scan-outline",
-        color: "#F44336",
-        text: "No QR Code Found",
-      };
+      return { color: "#F44336", text: "No QR code found" };
     }
 
     if (status === "qr_invalid") {
-      return {
-        icon: "close-circle",
-        color: "#F44336",
-        text: "Invalid QR Code",
-      };
+      return { color: "#F44336", text: "QR code invalid" };
     }
 
     if (status === "qr_expired") {
-      return { icon: "time", color: "#FF5722", text: "QR Code Expired" };
+      return { color: "#FF5722", text: "QR code expired" };
     }
 
     if (status === "failed") {
-      return {
-        icon: "alert-circle",
-        color: "#F44336",
-        text: "Processing Failed",
-      };
+      return { color: "#F44336", text: "Processing failed" };
     }
 
     if (qr_code && qrCodeValid) {
-      return {
-        icon: "qr-code",
-        color: "#4CAF50",
-        text: `QR: ${qr_code}`,
-      };
+      return { color: "#4CAF50", text: `QR: ${qr_code}` };
     }
 
-    return { icon: "scan-outline", color: "#9E9E9E", text: "Unknown Status" };
+    return { color: "#9E9E9E", text: "Unknown status" };
   };
 
   const renderSubmissionItem = ({ item }: { item: any }) => {
