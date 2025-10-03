@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Image } from "expo-image";
 import {
   View,
   Text,
@@ -6,7 +7,6 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Alert,
   Dimensions,
 } from "react-native";
@@ -25,21 +25,21 @@ export default function Index() {
   const mockSubmissions: Submission[] = [
     {
       id: "1",
-      imageUri: "https://placehold.co/200",
+      imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-10-01T10:30:00"),
       qrCode: { detected: true, content: "QR12345", confidence: 0.95 },
       status: "processed",
     },
     {
       id: "2",
-      imageUri: "https://placehold.co/200",
+      imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-10-01T09:15:00"),
       qrCode: { detected: false },
       status: "processed",
     },
     {
       id: "3",
-      imageUri: "https://placehold.co/200",
+      imageUri: "https://placehold.jp/200x200.png",
       timestamp: new Date("2024-09-30T16:45:00"),
       qrCode: null,
       status: "pending",
