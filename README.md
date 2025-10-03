@@ -85,6 +85,17 @@ Then choose your preferred platform:
 - Press `a` for Android
 - Press `i` for iOS
 
+### 5. Using ngrok for Mobile Development (Optional)
+
+If you want to test the mobile app with the backend API on a physical device or need to access the backend from outside your local network, you can use ngrok to expose your local backend:
+
+```bash
+npm install -g ngrok
+ngrok http 3000
+```
+
+Then update your mobile app's API endpoint to use the ngrok URL (e.g., `https://abc123.ngrok.io/api`).
+
 ## Manual Setup (Without Docker)
 
 ### Backend Setup
