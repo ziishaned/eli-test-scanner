@@ -13,7 +13,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { DateTime } from "luxon";
-import { eliCodeToLabelMap } from "../src/constants";
+import { eliCodeToLabelMap } from "../constants";
 import { StatusBar } from "expo-status-bar";
 
 const { width } = Dimensions.get("window");

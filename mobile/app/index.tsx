@@ -16,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { DateTime } from "luxon";
 import { Submission, SubmissionStatus } from "./types";
-import { eliCodeToLabelMap, statusLabelMap } from "../src/constants";
+import { eliCodeToLabelMap, statusLabelMap } from "../constants";
 
 const { width } = Dimensions.get("window");
 
