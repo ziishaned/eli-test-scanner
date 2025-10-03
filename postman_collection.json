@@ -59,10 +59,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://49c0ac3e2d43.ngrok-free.app/api/test-strips?limit=20",
-          "protocol": "https",
-          "host": ["49c0ac3e2d43", "ngrok-free", "app"],
-          "path": ["api", "test-strips"],
+          "raw": "{{url}}/test-strips?limit=20",
+          "host": ["{{url}}"],
+          "path": ["test-strips"],
           "query": [
             {
               "key": "limit",
