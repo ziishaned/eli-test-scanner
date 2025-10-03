@@ -139,7 +139,7 @@ export default function Index() {
     return (
       <TouchableOpacity
         style={styles.submissionItem}
-        onPress={() => router.push(`/details?id=${item.id}` as any)}
+        onPress={() => router.push(`/details?id=${item.id}`)}
       >
         <Image
           source={{
