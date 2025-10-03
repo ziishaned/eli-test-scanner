@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,12 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { DateTime } from "luxon";
 
 const { width } = Dimensions.get("window");
@@ -28,19 +30,97 @@ interface SubmissionData {
 }
 
 export default function DetailsScreen() {
-  // Mock data - in a real app, this would come from props or API
-  const submissionData: SubmissionData = {
-    id: "ee323ad2-5c4f-4f91-a228-6a5132529692",
-    qr_code: "ELI-2025-001",
-    original_image_path: "3f6d5e61-52f7-4532-b3cf-533a4a9cea02.png",
-    image_size: 8510,
-    image_dimensions: "278x258",
-    status: "completed",
-    error_message: null,
-    created_at: "2025-10-02T23:59:35.378Z",
-    originalImageUrl: "https://i.imgur.com/u6XMzPk.png",
-    quality: "good",
+  const { id } = useLocalSearchParams();
+  const [submissionData, setSubmissionData] = useState<SubmissionData | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      loadSubmissionDetails();
+    }
+  }, [id]);
+
+  const loadSubmissionDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(
+        `http://localhost:3000/api/test-strips/${id}`
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load submission details: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      // Transform the API response to match our interface
+      const transformedData: SubmissionData = {
+        id: data.id,
+        qr_code: data.qr_code,
+        original_image_path: data.original_image_path,
+        image_size: data.image_size,
+        image_dimensions: data.image_dimensions,
+        status: data.status,
+        error_message: data.error_message,
+        created_at: data.created_at,
+        originalImageUrl: `http://localhost:3000${data.originalImageUrl}`,
+        quality: data.quality,
+      };
+
+      setSubmissionData(transformedData);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to load submission details";
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.loadingText}>Loading submission details...</Text>
+      </View>
+    );
+  }
+
+  // Show error state
+  if (error || !submissionData) {
+    return (
+      <View style={styles.centerContainer}>
+        <Ionicons name="alert-circle-outline" size={64} color="#F44336" />
+        <Text style={styles.errorText}>Failed to load submission</Text>
+        <Text style={styles.errorSubtext}>
+          {error || "Submission not found"}
+        </Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={loadSubmissionDetails}
+        >
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`;
@@ -169,7 +249,7 @@ export default function DetailsScreen() {
               {submissionData.error_message && (
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Error</Text>
-                  <Text style={[styles.detailValue, styles.errorText]}>
+                  <Text style={[styles.detailValue, { color: "#F44336" }]}>
                     {submissionData.error_message}
                   </Text>
                 </View>
@@ -186,6 +266,58 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    paddingHorizontal: 32,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+  },
+  errorText: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#F44336",
+    textAlign: "center",
+  },
+  errorSubtext: {
+    marginTop: 8,
+    fontSize: 14,
+    color: "#999",
+    textAlign: "center",
+  },
+  retryButton: {
+    marginTop: 24,
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  backButton: {
+    marginTop: 12,
+    backgroundColor: "#f8f9fa",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e9ecef",
+  },
+  backButtonText: {
+    color: "#666",
+    fontSize: 16,
+    fontWeight: "600",
   },
   submissionImage: {
     position: "absolute",
@@ -293,8 +425,5 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "right",
     fontFamily: "monospace",
-  },
-  errorText: {
-    color: "#F44336",
   },
 });
