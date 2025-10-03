@@ -255,7 +255,10 @@ export default function Index() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={renderFooter}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[
+          styles.listContainer,
+          submissions.length === 0 && styles.emptyListContainer,
+        ]}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="camera-outline" size={64} color="#9E9E9E" />
@@ -285,6 +288,11 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
+  },
+  emptyListContainer: {
+    flexGrow: 1,
+    padding: 16,
+    justifyContent: "center",
   },
   submissionItem: {
     backgroundColor: "white",
@@ -385,7 +393,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 100,
   },
   emptyText: {
     fontSize: 18,
