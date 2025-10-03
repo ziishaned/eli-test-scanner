@@ -10,15 +10,15 @@ export default function RootLayout() {
       <Stack.Screen
         name="details"
         options={{
-          headerShown: false,
           presentation: "modal",
+          title: "Test strip details",
         }}
       />
       <Stack.Screen
         name="camera"
         options={{
-          headerShown: false,
           presentation: "modal",
+          title: "Capture test strip",
         }}
       />
     </Stack>
