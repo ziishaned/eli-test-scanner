@@ -47,7 +47,6 @@ export class ImageProcessor {
         quality,
       };
     } catch (error) {
-      console.error("Image processing failed:", error);
       return {
         imageDimensions: "unknown",
         imageSize: 0,
