@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import {
   View,
@@ -8,17 +8,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { DateTime } from "luxon";
-import { Submission, SubmissionStatus } from "./types";
 import { eliCodeToLabelMap, statusLabelMap } from "../constants";
-
-const { width } = Dimensions.get("window");
 
 export default function Index() {
   const [submissions, setSubmissions] = useState<any[]>([]);
