@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -17,6 +18,7 @@ const { width, height } = Dimensions.get("window");
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
 
   if (!permission) {
@@ -63,11 +65,8 @@ export default function CameraScreen() {
         });
 
         if (photo) {
-          // Navigate to preview screen with the photo URI
-          router.push({
-            pathname: "/preview" as any,
-            params: { imageUri: photo.uri },
-          });
+          // Set the captured image to show preview
+          setCapturedImage(photo.uri);
         }
       } catch (error) {
         console.error("Error taking picture:", error);
@@ -76,41 +75,130 @@ export default function CameraScreen() {
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      // Here you would typically upload the image to your backend
+      // For now, we'll just simulate the submission
+      Alert.alert(
+        "Submitting...",
+        "Your test strip photo is being processed.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Navigate back to home screen
+              router.replace("./");
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error submitting image:", error);
+      Alert.alert("Error", "Failed to submit photo. Please try again.");
+    }
+  };
+
+  const handleRetake = () => {
+    // Clear the captured image to go back to camera view
+    setCapturedImage(null);
+  };
+
+  const handleClose = () => {
+    // Discard the image and go back to home
+    router.replace("./");
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
-        {/* Top Controls */}
-        <View style={styles.topControls}>
-          <TouchableOpacity
-            style={styles.topButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="close" size={28} color="white" />
-          </TouchableOpacity>
+    <SafeAreaView
+      style={[styles.container, capturedImage && styles.previewContainer]}
+    >
+      {capturedImage ? (
+        // Preview Mode
+        <>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.headerButton} onPress={handleClose}>
+              <Ionicons name="close" size={28} color="#333" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Preview</Text>
+            <View style={styles.headerButton} />
+          </View>
 
-          <TouchableOpacity
-            style={styles.topButton}
-            onPress={toggleCameraFacing}
-          >
-            <Ionicons name="camera-reverse" size={28} color="white" />
-          </TouchableOpacity>
-        </View>
+          {/* Image Preview */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: capturedImage }}
+              style={styles.previewImage}
+              contentFit="contain"
+            />
+          </View>
 
-        {/* Camera Frame Overlay */}
-        <View style={styles.frameOverlay}>
-          <View style={styles.frame} />
-          <Text style={styles.frameText}>
-            Position the test strip within the frame
-          </Text>
-        </View>
+          {/* Instructions */}
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>
+              Please review the captured image. Make sure the test strip is
+              clearly visible and well-lit.
+            </Text>
+          </View>
 
-        {/* Bottom Controls */}
-        <View style={styles.bottomControls}>
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <View style={styles.captureButtonInner} />
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+          {/* Action Buttons */}
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={handleRetake}
+            >
+              <Ionicons name="camera" size={20} color="#007AFF" />
+              <Text style={styles.secondaryButtonText}>Retake</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={handleSubmit}
+            >
+              <Ionicons name="checkmark" size={20} color="white" />
+              <Text style={styles.primaryButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        // Camera Mode
+        <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+          {/* Top Controls */}
+          <View style={styles.topControls}>
+            <TouchableOpacity
+              style={styles.topButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="close" size={28} color="white" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.topButton}
+              onPress={toggleCameraFacing}
+            >
+              <Ionicons name="camera-reverse" size={28} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Camera Frame Overlay */}
+          <View style={styles.frameOverlay}>
+            <View style={styles.frame} />
+            <Text style={styles.frameText}>
+              Position the test strip within the frame
+            </Text>
+          </View>
+
+          {/* Bottom Controls */}
+          <View style={styles.bottomControls}>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
+              <View style={styles.captureButtonInner} />
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      )}
     </SafeAreaView>
   );
 }
@@ -119,6 +207,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
+  },
+  previewContainer: {
+    backgroundColor: "#f5f5f5",
   },
   loadingContainer: {
     flex: 1,
@@ -223,5 +314,94 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     backgroundColor: "white",
+  },
+  // Preview styles
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  imageContainer: {
+    flex: 1,
+    margin: 16,
+    backgroundColor: "white",
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  previewImage: {
+    width: "100%",
+    height: "100%",
+  },
+  instructionsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  instructionsText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    gap: 12,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: "#007AFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: 12,
+    gap: 8,
+  },
+  primaryButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  secondaryButton: {
+    flex: 1,
+    backgroundColor: "white",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#007AFF",
+    gap: 8,
+  },
+  secondaryButtonText: {
+    color: "#007AFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
