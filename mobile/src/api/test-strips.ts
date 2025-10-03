@@ -39,3 +39,21 @@ export const getTestStrips = async (
   );
   return response.data;
 };
+
+export const uploadTestStrip = async (
+  imageUri: string
+): Promise<SubmissionData> => {
+  const formData = new FormData();
+
+  formData.append("image", {
+    uri: imageUri,
+    type: "image/jpeg",
+    name: "test-strip.jpg",
+  } as unknown as Blob);
+
+  const response = await apiClient.post("/api/test-strips/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return response.data;
+};

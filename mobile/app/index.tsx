@@ -15,6 +15,7 @@ import { router } from "expo-router";
 import { eliCodeToLabelMap, statusLabelMap } from "../constants";
 import { formatDate } from "../src/utils/formatters";
 import { getTestStrips, SubmissionData } from "../src/api/test-strips";
+import { uploadsBaseURL } from "../src/api/client";
 
 export default function Index() {
   const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
@@ -82,7 +83,7 @@ export default function Index() {
         <Image
           source={{
             uri: item.thumbnail_url
-              ? `https://0e251d280bf8.ngrok-free.app${item.thumbnail_url}`
+              ? `${uploadsBaseURL}/${item.thumbnail_url}`
               : undefined,
           }}
           style={styles.thumbnail}

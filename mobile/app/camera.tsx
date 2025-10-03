@@ -16,6 +16,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { uploadTestStrip } from "../src/api/test-strips";
 
 const { width } = Dimensions.get("window");
 
@@ -81,35 +82,6 @@ export default function CameraScreen() {
     }
   };
 
-  const uploadImage = async (imageUri: string) => {
-    const formData = new FormData();
-
-    const imageFile = {
-      uri: imageUri,
-      type: "image/jpeg",
-      name: "test-strip.jpg",
-    } as any;
-
-    formData.append("image", imageFile);
-
-    const response = await fetch(
-      "https://0e251d280bf8.ngrok-free.app/api/test-strips/upload",
-      {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Upload failed with status: ${response.status}`);
-    }
-
-    return await response.json();
-  };
-
   const handleSubmit = async () => {
     if (!capturedImage) {
       Alert.alert("Error", "No image to submit.");
@@ -119,7 +91,7 @@ export default function CameraScreen() {
     setIsUploading(true);
 
     try {
-      await uploadImage(capturedImage);
+      await uploadTestStrip(capturedImage);
 
       Alert.alert(
         "Success!",
@@ -134,6 +106,7 @@ export default function CameraScreen() {
         ]
       );
     } catch (error) {
+      console.error("Upload error:", error);
       Alert.alert(
         "Upload Failed",
         "Failed to upload photo. Please check your internet connection and try again."
@@ -155,7 +128,7 @@ export default function CameraScreen() {
           <View style={styles.imageContainer}>
             <Image
               source={{ uri: capturedImage }}
-              style={[styles.previewImage, { borderRadius: 12 }]}
+              style={styles.previewImage}
               contentFit="contain"
             />
           </View>
