@@ -9,4 +9,5 @@ export const statusLabelMap = {
   valid: "Valid",
   invalid: "Invalid",
   expired: "Expired",
+  noQRCode: "No QR Code",
 };

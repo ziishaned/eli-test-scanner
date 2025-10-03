@@ -5,7 +5,7 @@ export interface TestStripSubmission {
   thumbnail_path?: string;
   image_size: number;
   image_dimensions: string;
-  status?: "valid" | "invalid" | "expired";
+  status?: "valid" | "invalid" | "expired" | "noQRCode";
   error_message?: string;
   created_at: Date;
 }
@@ -13,7 +13,7 @@ export interface TestStripSubmission {
 export interface QRCodeData {
   qrCode?: string;
   error?: string;
-  status: TestStripSubmission["status"];
+  status?: TestStripSubmission["status"];
 }
 
 export interface ImageProcessingResult {

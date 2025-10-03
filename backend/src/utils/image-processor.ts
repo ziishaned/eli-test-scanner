@@ -80,7 +80,7 @@ const processTestStrip = async (imageBuffer: Buffer): Promise<QRCodeData> => {
 
     if (!code) {
       return {
-        status: "invalid",
+        status: "noQRCode",
         error: "QR code not found",
       };
     }
