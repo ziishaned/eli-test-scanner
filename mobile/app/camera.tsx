@@ -128,7 +128,7 @@ export default function CameraScreen() {
           {
             text: "OK",
             onPress: () => {
-              router.replace("./");
+              router.back();
             },
           },
         ]
