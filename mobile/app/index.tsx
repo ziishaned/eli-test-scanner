@@ -12,8 +12,8 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { DateTime } from "luxon";
 import { eliCodeToLabelMap, statusLabelMap } from "../constants";
+import { formatDate } from "../src/utils/formatters";
 
 export default function Index() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -91,7 +91,7 @@ export default function Index() {
         <Image
           source={{
             uri: item.thumbnail_url
-              ? `https://49c0ac3e2d43.ngrok-free.app${item.thumbnail_url}`
+              ? `https://0e251d280bf8.ngrok-free.app${item.thumbnail_url}`
               : undefined,
           }}
           style={styles.thumbnail}
@@ -114,10 +114,7 @@ export default function Index() {
 
           {item.created_at && (
             <Text style={styles.processedText}>
-              Created At:{" "}
-              {DateTime.fromJSDate(new Date(item.created_at)).toLocaleString(
-                DateTime.DATETIME_SHORT
-              )}
+              Created at: {formatDate(item.created_at)}
             </Text>
           )}
         </View>

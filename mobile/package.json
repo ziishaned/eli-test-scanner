@@ -11,6 +11,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "axios": "^1.12.2",
     "expo": "~54.0.12",
     "expo-image": "~3.0.8",
     "expo-linking": "~8.0.8",

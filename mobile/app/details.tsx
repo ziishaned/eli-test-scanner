@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Dimensions,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
@@ -12,26 +11,14 @@ import {
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { DateTime } from "luxon";
-import { eliCodeToLabelMap } from "../constants";
+import { eliCodeToLabelMap, statusLabelMap } from "../constants";
 import { StatusBar } from "expo-status-bar";
-
-const { width } = Dimensions.get("window");
-
-interface SubmissionData {
-  id: string;
-  qr_code: string;
-  original_image_path: string;
-  image_size: number;
-  image_dimensions: string;
-  status: string;
-  error_message: string | null;
-  created_at: string;
-  originalImageUrl: string;
-}
+import { formatDate, formatFileSize } from "../src/utils/formatters";
+import { getTestStripById, SubmissionData } from "../src/api/test-strips";
+import { uploadsBaseURL } from "../src/api/client";
 
 export default function DetailsScreen() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [submissionData, setSubmissionData] = useState<SubmissionData | null>(
     null
   );
@@ -44,36 +31,13 @@ export default function DetailsScreen() {
     }
   }, [id]);
 
-  const loadSubmissionDetails = async () => {
+  const loadSubmissionDetails = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(
-        `https://0e251d280bf8.ngrok-free.app/api/test-strips/${id}`
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to load submission details: ${response.status}`
-        );
-      }
-
-      const data = await response.json();
-
-      const transformedData: SubmissionData = {
-        id: data.id,
-        qr_code: data.qr_code,
-        original_image_path: data.original_image_path,
-        image_size: data.image_size,
-        image_dimensions: data.image_dimensions,
-        status: data.status,
-        error_message: data.error_message,
-        created_at: data.created_at,
-        originalImageUrl: `https://49c0ac3e2d43.ngrok-free.app${data.originalImageUrl}`,
-      };
-
-      setSubmissionData(transformedData);
+      const data = await getTestStripById(id);
+      setSubmissionData(data);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -84,8 +48,13 @@ export default function DetailsScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
+  useEffect(() => {
+    if (id) {
+      loadSubmissionDetails();
+    }
+  }, [id, loadSubmissionDetails]);
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -105,31 +74,30 @@ export default function DetailsScreen() {
         <Text style={styles.errorSubtext}>
           {error || "Submission not found"}
         </Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={loadSubmissionDetails}
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 16,
+            alignItems: "center",
+            gap: 10,
+          }}
         >
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={loadSubmissionDetails}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  const formatDate = (dateString: string): string => {
-    return DateTime.fromISO(dateString).toFormat("MMM dd, yyyy 'at' h:mm a");
-  };
 
   return (
     <View style={styles.container}>
@@ -137,7 +105,9 @@ export default function DetailsScreen() {
       <Image
         contentFit="contain"
         style={styles.submissionImage}
-        source={{ uri: submissionData.originalImageUrl }}
+        source={{
+          uri: `${uploadsBaseURL}/${submissionData.original_image_path}`,
+        }}
       />
 
       <View style={styles.detailsSection}>
@@ -157,7 +127,13 @@ export default function DetailsScreen() {
               </Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Created</Text>
+              <Text style={styles.detailLabel}>Status</Text>
+              <Text style={styles.detailValue}>
+                {statusLabelMap[submissionData.status]}
+              </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Created at</Text>
               <Text style={styles.detailValue}>
                 {formatDate(submissionData.created_at)}
               </Text>
@@ -184,7 +160,9 @@ export default function DetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    gap: 10,
+    paddingTop: 16,
+    backgroundColor: "white",
   },
   centerContainer: {
     flex: 1,
@@ -213,7 +191,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   retryButton: {
-    marginTop: 24,
     backgroundColor: "#007AFF",
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -225,7 +202,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   backButton: {
-    marginTop: 12,
     backgroundColor: "#f8f9fa",
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -239,81 +215,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   submissionImage: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width,
-    height: 292,
-    backgroundColor: "white",
+    height: 200,
+    width: "100%",
     resizeMode: "contain",
-    zIndex: 1,
+    backgroundColor: "white",
   },
   detailsSection: {
     flex: 1,
-    marginTop: 180,
     backgroundColor: "white",
-    paddingTop: 20,
     zIndex: 2,
   },
   scrollView: {
     flex: 1,
   },
-  dataContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-  },
-  qrCodeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e9ecef",
-    marginBottom: 16,
-  },
   qrCode: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    fontFamily: "monospace",
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    marginBottom: 16,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  imageInfoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 4,
-    marginBottom: 16,
-  },
-  imageInfoText: {
-    fontSize: 12,
-    color: "#666",
-    fontWeight: "500",
   },
   detailsContainer: {
     gap: 12,
@@ -335,6 +253,5 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 1,
     textAlign: "right",
-    fontFamily: "monospace",
   },
 });
