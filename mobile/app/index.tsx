@@ -136,16 +136,9 @@ export default function Index() {
         />
 
         <View style={styles.submissionInfo}>
-          <View style={styles.qrCodeMainRow}>
-            <Ionicons
-              name={qrStatus.icon as any}
-              size={18}
-              color={qrStatus.color}
-            />
-            <Text style={[styles.qrCodeMainText, { color: qrStatus.color }]}>
-              {item.qr_code ? item.qr_code : "No QR code"}
-            </Text>
-          </View>
+          <Text style={[styles.qrCodeMainText, { color: qrStatus.color }]}>
+            {item.qr_code ? item.qr_code : "No QR code"}
+          </Text>
 
           {item.qr_code && (
             <View style={styles.statusDetailRow}>
@@ -300,7 +293,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   qrCodeMainText: {
-    marginLeft: 8,
     fontSize: 16,
     fontWeight: "600",
     flex: 1,
