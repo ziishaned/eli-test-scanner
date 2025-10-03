@@ -7,7 +7,7 @@ CREATE TABLE test_strip_submissions (
     image_dimensions VARCHAR(50),
     status VARCHAR(50) NOT NULL,
     error_message TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
 );
 
 CREATE INDEX idx_qr_code ON test_strip_submissions(qr_code);

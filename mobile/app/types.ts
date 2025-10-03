@@ -13,7 +13,6 @@ export interface Submission {
   qrCode?: string;
   qrCodeValid?: boolean;
   status: SubmissionStatus;
-  processedAt: Date;
 }
 
 export interface SubmissionResponse {
@@ -21,5 +20,4 @@ export interface SubmissionResponse {
   status: SubmissionStatus;
   qrCode?: string;
   qrCodeValid?: boolean;
-  processedAt: Date;
 }
