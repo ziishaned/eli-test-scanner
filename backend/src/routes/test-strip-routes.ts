@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { TestStripController } from "../controllers/testStripController";
 import { uploadSingleImage } from "../middleware/upload";
-import { asyncHandler } from "../middleware/errorHandler";
+import { asyncHandler } from "../middleware/error-handler";
+import { TestStripController } from "../controllers/test-strip-controller";
 
 const router = Router();
 

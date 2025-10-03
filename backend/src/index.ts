@@ -4,8 +4,8 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import { testConnection } from "./database";
-import testStripRoutes from "./routes/testStripRoutes";
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import testStripRoutes from "./routes/test-strip-routes";
+import { errorHandler, notFoundHandler } from "./middleware/error-handler";
 
 const app = express();
 

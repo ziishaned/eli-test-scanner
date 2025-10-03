@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import path from "path";
-import { TestStripModel } from "../models/TestStripModel";
-import { ImageProcessor } from "../utils/imageProcessor";
+import { ImageProcessor } from "../utils/image-processor";
+import { TestStripModel } from "../models/test-strip-model";
 import { UploadResponse, SubmissionStatus, PaginationParams } from "../types";
 
 export class TestStripController {
@@ -32,7 +31,7 @@ export class TestStripController {
         req.file.originalname
       );
 
-      // Determine status based on processing result
+      // Determine status based on a processing result
       let status: SubmissionStatus = "completed";
       let errorMessage: string | undefined;
 
@@ -80,7 +79,7 @@ export class TestStripController {
 
   /**
    * GET /api/test-strips
-   * Get paginated list of test strip submissions
+   * Get a paginated list of test strip submissions
    */
   static async getTestStrips(req: Request, res: Response): Promise<void> {
     try {
