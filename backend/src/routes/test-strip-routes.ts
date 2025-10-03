@@ -1,41 +1,21 @@
+import {
+  getTestStrips,
+  uploadTestStrip,
+  getTestStripById,
+} from "@/src/controllers/test-strip-controller";
 import { Router } from "express";
-import { uploadSingleImage } from "../middleware/upload";
-import { asyncHandler } from "../middleware/error-handler";
-import { TestStripController } from "../controllers/test-strip-controller";
-import { Request, Response, NextFunction } from "express";
+import { asyncHandler } from "@/src/middleware/error-handler";
+import { handleMulterError, uploadSingleImage } from "@/src/middleware/upload";
 
 const router = Router();
 
-// Multer error handler middleware
-const handleMulterError = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (
-    err &&
-    (err.name === "MulterError" || err.message.includes("Invalid file type"))
-  ) {
-    return res.status(400).json({
-      error: err.message,
-    });
-  }
-  next(err);
-};
-
-// POST /api/test-strips/upload
 router.post(
   "/upload",
   uploadSingleImage,
   handleMulterError,
-  asyncHandler(TestStripController.uploadTestStrip)
+  asyncHandler(uploadTestStrip)
 );
-
-// GET /api/test-strips
-router.get("/", asyncHandler(TestStripController.getTestStrips));
-
-// GET /api/test-strips/:id
-router.get("/:id", asyncHandler(TestStripController.getTestStripById));
+router.get("/", asyncHandler(getTestStrips));
+router.get("/:id", asyncHandler(getTestStripById));
 
 export default router;

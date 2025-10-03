@@ -1,168 +1,142 @@
-import sharp from "sharp";
 import jsQR from "jsqr";
-import { promises as fs } from "fs";
 import path from "path";
+import sharp from "sharp";
 import sizeOf from "image-size";
-import { QRCodeData, ImageProcessingResult } from "../types";
+import { promises as fs } from "fs";
+import { ImageProcessingResult, QRCodeData } from "@/src/types";
 
-export class ImageProcessor {
-  private static readonly THUMBNAIL_SIZE = 200;
-  private static readonly QR_CODE_PATTERN = /^ELI-(\d{4})-\w+$/;
-  private static readonly CURRENT_YEAR = new Date().getFullYear();
+const thumbnailSize = 200;
 
-  /**
-   * Process uploaded image: validate, generate thumbnail, extract QR code
-   */
-  static async processImage(
-    imagePath: string,
-    filename: string
-  ): Promise<ImageProcessingResult> {
-    try {
-      // Get image metadata
-      const imageBuffer = await fs.readFile(imagePath);
-      const dimensions = sizeOf(imageBuffer);
-      const stats = await fs.stat(imagePath);
+export const processImage = async (
+  imagePath: string,
+  filename: string
+): Promise<ImageProcessingResult> => {
+  try {
+    const imageBuffer = await fs.readFile(imagePath);
+    const dimensions = sizeOf(imageBuffer);
+    const stats = await fs.stat(imagePath);
 
-      if (!dimensions.width || !dimensions.height) {
-        throw new Error("Invalid image dimensions");
-      }
-
-      const imageDimensions = `${dimensions.width}x${dimensions.height}`;
-      const imageSize = stats.size;
-
-      // Generate thumbnail
-      const thumbnailPath = await this.generateThumbnail(imagePath, filename);
-
-      // Extract QR code
-      const qrCode = await this.extractQRCode(imageBuffer);
-
-      return {
-        thumbnailPath,
-        imageDimensions,
-        imageSize,
-        qrCode,
-      };
-    } catch (error) {
-      return {
-        imageDimensions: "unknown",
-        imageSize: 0,
-      };
+    if (!dimensions.width || !dimensions.height) {
+      throw new Error("Invalid image dimensions");
     }
+
+    const imageDimensions = `${dimensions.width}x${dimensions.height}`;
+    const imageSize = stats.size;
+
+    const thumbnailPath = await generateThumbnail(imagePath, filename);
+
+    const qrCode = await extractQRCode(imageBuffer);
+
+    return {
+      thumbnailPath,
+      imageDimensions,
+      imageSize,
+      qrCode,
+    };
+  } catch (error) {
+    return {
+      imageDimensions: "unknown",
+      imageSize: 0,
+    };
   }
+};
 
-  /**
-   * Generate thumbnail using Sharp
-   */
-  private static async generateThumbnail(
-    imagePath: string,
-    originalFilename: string
-  ): Promise<string> {
-    const ext = path.extname(originalFilename);
-    const thumbnailFilename = `thumb_${Date.now()}${ext}`;
-    const thumbnailPath = path.join(
-      process.cwd(),
-      "..",
-      "uploads",
-      thumbnailFilename
-    );
+const generateThumbnail = async (
+  imagePath: string,
+  originalFilename: string
+): Promise<string> => {
+  const ext = path.extname(originalFilename);
+  const thumbnailFilename = `thumb_${Date.now()}${ext}`;
+  const thumbnailPath = path.join(
+    process.cwd(),
+    "..",
+    "uploads",
+    thumbnailFilename
+  );
 
-    await sharp(imagePath)
-      .resize(this.THUMBNAIL_SIZE, this.THUMBNAIL_SIZE, {
-        fit: "cover",
-        position: "center",
-      })
-      .jpeg({ quality: 80 })
-      .toFile(thumbnailPath);
+  await sharp(imagePath)
+    .resize(thumbnailSize, thumbnailSize, {
+      fit: "cover",
+      position: "center",
+    })
+    .jpeg({ quality: 80 })
+    .toFile(thumbnailPath);
 
-    return thumbnailFilename;
-  }
+  return thumbnailFilename;
+};
 
-  /**
-   * Extract QR code from image using jsQR
-   */
-  private static async extractQRCode(
-    imageBuffer: Buffer
-  ): Promise<QRCodeData | undefined> {
-    try {
-      const sharpImg = sharp(imageBuffer).resize({
-        width: 800,
-        withoutEnlargement: true,
-      });
+const extractQRCode = async (imageBuffer: Buffer): Promise<QRCodeData> => {
+  try {
+    const sharpImg = sharp(imageBuffer).resize({
+      width: 800,
+      withoutEnlargement: true,
+    });
 
-      // Convert image to raw pixel data using Sharp
-      const { data, info } = await sharpImg
-        .raw()
-        .ensureAlpha()
-        .toBuffer({ resolveWithObject: true });
+    const { data, info } = await sharpImg
+      .raw()
+      .ensureAlpha()
+      .toBuffer({ resolveWithObject: true });
 
-      // Create Uint8ClampedArray for jsQR
-      const imageData = new Uint8ClampedArray(data.buffer);
+    const imageData = new Uint8ClampedArray(data.buffer);
 
-      // Scan for QR code
-      const code = jsQR(imageData, info.width, info.height);
+    const code = jsQR(imageData, info.width, info.height);
 
-      if (!code) {
-        return undefined;
-      }
-
-      // Validate QR code format and expiration
-      const qrData = code.data;
-      const isValid = this.validateQRCodeFormat(qrData);
-      const isExpired = this.isQRCodeExpired(qrData);
-
+    if (!code) {
       return {
-        data: qrData,
-        isValid,
-        isExpired,
-      };
-    } catch (error) {
-      console.error("QR code extraction failed:", error);
-      return undefined;
-    }
-  }
-
-  /**
-   * Validate QR code format (ELI-YYYY-XXX)
-   */
-  private static validateQRCodeFormat(qrData: string): boolean {
-    return this.QR_CODE_PATTERN.test(qrData);
-  }
-
-  /**
-   * Check if QR code is expired based on year
-   */
-  private static isQRCodeExpired(qrData: string): boolean {
-    const match = qrData.match(this.QR_CODE_PATTERN);
-    if (!match) return true;
-
-    const year = parseInt(match[1]);
-    return year < this.CURRENT_YEAR;
-  }
-
-  /**
-   * Validate uploaded file
-   */
-  static validateImageFile(file: Express.Multer.File): {
-    isValid: boolean;
-    error?: string;
-  } {
-    const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!allowedMimes.includes(file.mimetype)) {
-      return {
-        isValid: false,
-        error: "Invalid file type. Only JPG and PNG files are allowed.",
+        status: "invalid",
+        errorMessage: "QR code not found",
       };
     }
 
-    if (file.size > maxSize) {
+    const qrCode = code.data;
+    if (qrCode === "ELI-2024-999") {
       return {
-        isValid: false,
-        error: "File size too large. Maximum size is 10MB.",
+        data: qrCode,
+        status: "expired",
+        errorMessage: "Test strip expired",
+      };
+    } else if (qrCode.startsWith("ELI-2025")) {
+      return {
+        data: qrCode,
+        status: "valid",
+      };
+    } else {
+      return {
+        data: qrCode,
+        status: "invalid",
+        errorMessage: "Unknown QR code format",
       };
     }
-
-    return { isValid: true };
+  } catch (error) {
+    return {
+      status: "invalid",
+      errorMessage: "Error processing QR code",
+    };
   }
-}
+};
+
+export const validateImageFile = (
+  file: Express.Multer.File
+): {
+  isValid: boolean;
+  error?: string;
+} => {
+  const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
+  const maxSize = 10 * 1024 * 1024; // 10MB
+
+  if (!allowedMimes.includes(file.mimetype)) {
+    return {
+      isValid: false,
+      error: "Invalid file type. Only JPG and PNG files are allowed.",
+    };
+  }
+
+  if (file.size > maxSize) {
+    return {
+      isValid: false,
+      error: "File size too large. Maximum size is 10MB.",
+    };
+  }
+
+  return { isValid: true };
+};

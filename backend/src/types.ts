@@ -10,21 +10,7 @@ export interface TestStripSubmission {
   created_at: Date;
 }
 
-export type SubmissionStatus =
-  | "processing"
-  | "completed"
-  | "failed"
-  | "qr_not_found"
-  | "qr_invalid"
-  | "qr_expired";
-
-export interface UploadResponse {
-  id: string;
-  status: SubmissionStatus;
-  qr_code?: string;
-  qr_code_valid?: boolean;
-  processed_at: Date;
-}
+export type SubmissionStatus = "valid" | "invalid" | "expired";
 
 export interface TestStripListItem {
   id: string;
@@ -35,9 +21,9 @@ export interface TestStripListItem {
 }
 
 export interface QRCodeData {
-  data: string;
-  isValid: boolean;
-  isExpired: boolean;
+  data?: string;
+  errorMessage?: string;
+  status: SubmissionStatus;
 }
 
 export interface ImageProcessingResult {

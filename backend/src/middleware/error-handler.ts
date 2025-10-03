@@ -13,7 +13,6 @@ export class AppError extends Error {
   }
 }
 
-// Global error handler
 export const errorHandler = (
   err: AppError,
   req: Request,
@@ -22,7 +21,6 @@ export const errorHandler = (
 ): void => {
   err.statusCode = err.statusCode || 500;
 
-  // Log error
   if (process.env.NODE_ENV === "development") {
     console.error("Error:", {
       message: err.message,
@@ -35,7 +33,6 @@ export const errorHandler = (
     });
   }
 
-  // Send error response
   if (
     process.env.NODE_ENV === "development" ||
     process.env.NODE_ENV === "test"
@@ -46,7 +43,6 @@ export const errorHandler = (
       stack: err.stack,
     });
   } else {
-    // In production, don't leak error details
     if (err.isOperational) {
       res.status(err.statusCode).json({
         error: err.message,
@@ -59,14 +55,12 @@ export const errorHandler = (
   }
 };
 
-// Handle async errors
 export const asyncHandler = (fn: Function) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-// 404 handler
 export const notFoundHandler = (req: Request, res: Response): void => {
   res.status(404).json({
     error: "Route not found",
