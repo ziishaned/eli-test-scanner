@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,11 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import {
+  Camera,
+  useCameraDevice,
+  useCameraPermission,
+} from "react-native-vision-camera";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -16,13 +20,16 @@ import { router } from "expo-router";
 const { width, height } = Dimensions.get("window");
 
 export default function CameraScreen() {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
+  const [cameraPosition, setCameraPosition] = useState<"back" | "front">(
+    "back"
+  );
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const cameraRef = useRef<CameraView>(null);
+  const cameraRef = useRef<Camera>(null);
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const device = useCameraDevice(cameraPosition);
 
-  if (!permission) {
-    // Camera permissions are still loading
+  if (!device) {
+    // Camera device is not available
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
@@ -32,7 +39,7 @@ export default function CameraScreen() {
     );
   }
 
-  if (!permission.granted) {
+  if (!hasPermission) {
     // Camera permissions are not granted yet
     return (
       <SafeAreaView style={styles.container}>
@@ -53,20 +60,21 @@ export default function CameraScreen() {
   }
 
   const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
+    setCameraPosition((current) => (current === "back" ? "front" : "back"));
   };
 
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
-          base64: false,
-        });
+        const photo = await cameraRef.current.takePhoto();
 
         if (photo) {
           // Set the captured image to show preview
-          setCapturedImage(photo.uri);
+          setCapturedImage(
+            photo.path.startsWith("file://")
+              ? photo.path
+              : `file://${photo.path}`
+          );
         }
       } catch (error) {
         console.error("Error taking picture:", error);
@@ -162,7 +170,13 @@ export default function CameraScreen() {
         </>
       ) : (
         // Camera Mode
-        <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          device={device}
+          isActive={true}
+          photo={true}
+        >
           {/* Top Controls */}
           <View style={styles.topControls}>
             <TouchableOpacity
@@ -197,7 +211,7 @@ export default function CameraScreen() {
               <View style={styles.captureButtonInner} />
             </TouchableOpacity>
           </View>
-        </CameraView>
+        </Camera>
       )}
     </SafeAreaView>
   );
