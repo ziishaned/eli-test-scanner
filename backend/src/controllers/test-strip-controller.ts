@@ -35,10 +35,7 @@ export class TestStripController {
       let status: SubmissionStatus = "completed";
       let errorMessage: string | undefined;
 
-      if (processingResult.quality === "failed") {
-        status = "failed";
-        errorMessage = "Image processing failed";
-      } else if (!processingResult.qrCode) {
+      if (!processingResult.qrCode) {
         status = "qr_not_found";
       } else if (!processingResult.qrCode.isValid) {
         status = "qr_invalid";
@@ -63,7 +60,6 @@ export class TestStripController {
         status: submission.status,
         qr_code: submission.qr_code,
         qr_code_valid: processingResult.qrCode?.isValid,
-        quality: processingResult.quality,
         processed_at: submission.created_at,
       };
 
@@ -139,12 +135,6 @@ export class TestStripController {
         thumbnailUrl: submission.thumbnail_path
           ? `/uploads/${submission.thumbnail_path}`
           : null,
-        quality:
-          submission.status === "completed"
-            ? "good"
-            : submission.status === "failed"
-            ? "failed"
-            : "poor",
       };
 
       res.json(response);

@@ -102,7 +102,6 @@ describe("Test Strip API Integration Tests", () => {
         status: "completed",
         qr_code: "ELI-2024-ABC123",
         qr_code_valid: true,
-        quality: "good",
         processed_at: "2024-01-01T00:00:00.000Z",
       });
 
@@ -126,7 +125,6 @@ describe("Test Strip API Integration Tests", () => {
       mockImageProcessor.processImage.mockResolvedValue(
         createMockImageProcessingResult({
           qrCode: undefined,
-          quality: "poor",
         })
       );
 
@@ -155,7 +153,6 @@ describe("Test Strip API Integration Tests", () => {
         status: "qr_not_found",
         qr_code: undefined,
         qr_code_valid: undefined,
-        quality: "poor",
         processed_at: "2024-01-01T00:00:00.000Z",
       });
 
@@ -178,7 +175,6 @@ describe("Test Strip API Integration Tests", () => {
             isValid: false,
             isExpired: false,
           },
-          quality: "poor",
         })
       );
 
@@ -207,7 +203,6 @@ describe("Test Strip API Integration Tests", () => {
         status: "qr_invalid",
         qr_code: "INVALID-QR-CODE",
         qr_code_valid: false,
-        quality: "poor",
         processed_at: "2024-01-01T00:00:00.000Z",
       });
     });
@@ -223,7 +218,6 @@ describe("Test Strip API Integration Tests", () => {
             isValid: true,
             isExpired: true,
           },
-          quality: "poor",
         })
       );
 
@@ -291,7 +285,7 @@ describe("Test Strip API Integration Tests", () => {
       mockImageProcessor.validateImageFile.mockReturnValue({ isValid: true });
       mockImageProcessor.processImage.mockResolvedValue(
         createMockImageProcessingResult({
-          quality: "failed",
+          qrCode: undefined, // No QR code found due to processing error
         })
       );
 
@@ -302,8 +296,8 @@ describe("Test Strip API Integration Tests", () => {
         thumbnail_path: undefined,
         image_size: 0,
         image_dimensions: "unknown",
-        status: "failed",
-        error_message: "Image processing failed",
+        status: "qr_not_found",
+        error_message: undefined,
         created_at: new Date("2024-01-01T00:00:00Z"),
       });
 
@@ -315,8 +309,7 @@ describe("Test Strip API Integration Tests", () => {
         });
 
       expect(response.status).toBe(201);
-      expect(response.body.status).toBe("failed");
-      expect(response.body.quality).toBe("failed");
+      expect(response.body.status).toBe("qr_not_found");
     });
 
     it("should handle database errors", async () => {
@@ -351,7 +344,6 @@ describe("Test Strip API Integration Tests", () => {
             id: "test-1",
             qr_code: "ELI-2024-ABC123",
             status: "completed" as SubmissionStatus,
-            quality: "good" as const,
             thumbnail_url: "/uploads/thumb_1.jpg",
             created_at: new Date("2024-01-01T00:00:00Z"),
           },
@@ -359,7 +351,6 @@ describe("Test Strip API Integration Tests", () => {
             id: "test-2",
             qr_code: undefined,
             status: "qr_not_found" as SubmissionStatus,
-            quality: "poor" as const,
             thumbnail_url: undefined,
             created_at: new Date("2024-01-02T00:00:00Z"),
           },
@@ -383,14 +374,12 @@ describe("Test Strip API Integration Tests", () => {
             id: "test-1",
             qr_code: "ELI-2024-ABC123",
             status: "completed",
-            quality: "good",
             thumbnail_url: "/uploads/thumb_1.jpg",
             created_at: "2024-01-01T00:00:00.000Z",
           },
           {
             id: "test-2",
             status: "qr_not_found",
-            quality: "poor",
             created_at: "2024-01-02T00:00:00.000Z",
           },
         ],
@@ -503,7 +492,6 @@ describe("Test Strip API Integration Tests", () => {
         created_at: "2024-01-01T00:00:00.000Z",
         originalImageUrl: "/uploads/original.jpg",
         thumbnailUrl: "/uploads/thumb.jpg",
-        quality: "good",
       });
       expect(mockTestStripModel.findById).toHaveBeenCalledWith(testId);
     });
@@ -531,38 +519,6 @@ describe("Test Strip API Integration Tests", () => {
         error: "Invalid ID format",
       });
       expect(mockTestStripModel.findById).not.toHaveBeenCalled();
-    });
-
-    it("should map quality correctly based on status", async () => {
-      const testCases = [
-        { status: "completed", expectedQuality: "good" },
-        { status: "qr_not_found", expectedQuality: "poor" },
-        { status: "qr_invalid", expectedQuality: "poor" },
-        { status: "qr_expired", expectedQuality: "poor" },
-        { status: "failed", expectedQuality: "failed" },
-      ];
-
-      for (const { status, expectedQuality } of testCases) {
-        const testId = `12345678-1234-4123-a123-123456789012`;
-        const mockSubmission = {
-          id: testId,
-          qr_code: "ELI-2024-ABC123",
-          original_image_path: "original.jpg",
-          thumbnail_path: "thumb.jpg",
-          image_size: 1024000,
-          image_dimensions: "1920x1080",
-          status: status as any,
-          error_message: undefined,
-          created_at: new Date("2024-01-01T00:00:00Z"),
-        };
-
-        mockTestStripModel.findById.mockResolvedValue(mockSubmission);
-
-        const response = await request(app).get(`/api/test-strips/${testId}`);
-
-        expect(response.status).toBe(200);
-        expect(response.body.quality).toBe(expectedQuality);
-      }
     });
 
     it("should handle database errors", async () => {

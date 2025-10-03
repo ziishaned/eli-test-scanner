@@ -26,7 +26,6 @@ interface SubmissionData {
   error_message: string | null;
   created_at: string;
   originalImageUrl: string;
-  quality: string;
 }
 
 export default function DetailsScreen() {
@@ -71,7 +70,6 @@ export default function DetailsScreen() {
         error_message: data.error_message,
         created_at: data.created_at,
         originalImageUrl: `https://49c0ac3e2d43.ngrok-free.app${data.originalImageUrl}`,
-        quality: data.quality,
       };
 
       setSubmissionData(transformedData);
@@ -145,19 +143,6 @@ export default function DetailsScreen() {
     }
   };
 
-  const getQualityColor = (quality: string): string => {
-    switch (quality.toLowerCase()) {
-      case "good":
-        return "#4CAF50";
-      case "fair":
-        return "#FF9800";
-      case "poor":
-        return "#F44336";
-      default:
-        return "#666";
-    }
-  };
-
   return (
     <View style={styles.container}>
       {/* Full Width Image - Absolute positioned */}
@@ -182,7 +167,7 @@ export default function DetailsScreen() {
               </View>
             </View>
 
-            {/* Status and Quality */}
+            {/* Status */}
             <View style={styles.statusRow}>
               <View style={styles.statusBadge}>
                 <View
@@ -199,25 +184,6 @@ export default function DetailsScreen() {
                 >
                   {submissionData.status.charAt(0).toUpperCase() +
                     submissionData.status.slice(1)}
-                </Text>
-              </View>
-              <View style={styles.statusBadge}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    {
-                      backgroundColor: getQualityColor(submissionData.quality),
-                    },
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.qualityText,
-                    { color: getQualityColor(submissionData.quality) },
-                  ]}
-                >
-                  {submissionData.quality.charAt(0).toUpperCase() +
-                    submissionData.quality.slice(1)}
                 </Text>
               </View>
             </View>
@@ -387,10 +353,6 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  qualityText: {
     fontSize: 14,
     fontWeight: "600",
   },

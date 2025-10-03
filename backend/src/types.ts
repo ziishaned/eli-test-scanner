@@ -23,7 +23,6 @@ export interface UploadResponse {
   status: SubmissionStatus;
   qr_code?: string;
   qr_code_valid?: boolean;
-  quality: "good" | "poor" | "failed";
   processed_at: Date;
 }
 
@@ -31,7 +30,6 @@ export interface TestStripListItem {
   id: string;
   qr_code?: string;
   status: SubmissionStatus;
-  quality: "good" | "poor" | "failed";
   thumbnail_url?: string;
   created_at: Date;
 }
@@ -47,7 +45,6 @@ export interface ImageProcessingResult {
   imageDimensions: string;
   imageSize: number;
   qrCode?: QRCodeData;
-  quality: "good" | "poor" | "failed";
 }
 
 export interface PaginationParams {

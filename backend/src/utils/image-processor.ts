@@ -34,23 +34,18 @@ export class ImageProcessor {
       const thumbnailPath = await this.generateThumbnail(imagePath, filename);
 
       // Extract QR code
-      const qrCode = await this.extractQRCode(imagePath);
-
-      // Determine quality based on QR code and image properties
-      const quality = this.determineQuality(qrCode, dimensions);
+      const qrCode = await this.extractQRCode(imageBuffer);
 
       return {
         thumbnailPath,
         imageDimensions,
         imageSize,
         qrCode,
-        quality,
       };
     } catch (error) {
       return {
         imageDimensions: "unknown",
         imageSize: 0,
-        quality: "failed",
       };
     }
   }
@@ -86,11 +81,16 @@ export class ImageProcessor {
    * Extract QR code from image using jsQR
    */
   private static async extractQRCode(
-    imagePath: string
+    imageBuffer: Buffer
   ): Promise<QRCodeData | undefined> {
     try {
+      const sharpImg = sharp(imageBuffer).resize({
+        width: 800,
+        withoutEnlargement: true,
+      });
+
       // Convert image to raw pixel data using Sharp
-      const { data, info } = await sharp(imagePath)
+      const { data, info } = await sharpImg
         .raw()
         .ensureAlpha()
         .toBuffer({ resolveWithObject: true });
@@ -137,31 +137,6 @@ export class ImageProcessor {
 
     const year = parseInt(match[1]);
     return year < this.CURRENT_YEAR;
-  }
-
-  /**
-   * Determine image quality based on QR code and image properties
-   */
-  private static determineQuality(
-    qrCode: QRCodeData | undefined,
-    dimensions: { width?: number; height?: number }
-  ): "good" | "poor" | "failed" {
-    if (!dimensions.width || !dimensions.height) {
-      return "failed";
-    }
-
-    // Consider image too small if less than 200x200
-    const isImageTooSmall = dimensions.width < 200 || dimensions.height < 200;
-
-    if (!qrCode) {
-      return isImageTooSmall ? "failed" : "poor";
-    }
-
-    if (!qrCode.isValid || qrCode.isExpired) {
-      return "poor";
-    }
-
-    return isImageTooSmall ? "poor" : "good";
   }
 
   /**

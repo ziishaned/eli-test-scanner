@@ -5,8 +5,10 @@ import {
   setupTestEnv,
 } from "../test-helpers";
 import sharp from "sharp";
-import jsQR from "jsqr";
-import { promises as fs } from "fs";
+import jsQR from "jsqr"      );
+
+      expect(result.imageDimensions).toBe(\"100x100\");
+    });ort { promises as fs } from "fs";
 import path from "path";
 import sizeOf from "image-size";
 
@@ -149,7 +151,6 @@ describe("ImageProcessor", () => {
           isValid: true,
           isExpired: false,
         },
-        quality: "good",
       });
 
       // Verify Sharp was called for thumbnail generation
@@ -166,7 +167,6 @@ describe("ImageProcessor", () => {
       );
 
       expect(result.qrCode).toBeUndefined();
-      expect(result.quality).toBe("poor");
     });
 
     it("should handle invalid QR code format", async () => {
@@ -183,7 +183,6 @@ describe("ImageProcessor", () => {
         isValid: false,
         isExpired: true, // Invalid format means expired
       });
-      expect(result.quality).toBe("poor");
     });
 
     it("should handle expired QR code", async () => {
@@ -200,7 +199,6 @@ describe("ImageProcessor", () => {
         isValid: true,
         isExpired: true,
       });
-      expect(result.quality).toBe("poor");
     });
 
     it("should handle small image dimensions", async () => {
@@ -214,7 +212,6 @@ describe("ImageProcessor", () => {
         mockFilename
       );
 
-      expect(result.quality).toBe("poor");
       expect(result.imageDimensions).toBe("100x100");
     });
 
@@ -230,7 +227,6 @@ describe("ImageProcessor", () => {
       expect(result).toEqual({
         imageDimensions: "unknown",
         imageSize: 0,
-        quality: "failed",
       });
     });
 
@@ -242,8 +238,6 @@ describe("ImageProcessor", () => {
         mockImagePath,
         mockFilename
       );
-
-      expect(result.quality).toBe("failed");
     });
   });
 
@@ -328,7 +322,6 @@ describe("ImageProcessor", () => {
         "/test/image.jpg",
         "test.jpg"
       );
-      expect(result.quality).toBe("good");
     });
 
     it('should return "poor" for small image with valid QR code', async () => {
@@ -343,7 +336,6 @@ describe("ImageProcessor", () => {
         "/test/image.jpg",
         "test.jpg"
       );
-      expect(result.quality).toBe("poor");
     });
 
     it('should return "poor" for good image with invalid QR code', async () => {
@@ -358,7 +350,6 @@ describe("ImageProcessor", () => {
         "/test/image.jpg",
         "test.jpg"
       );
-      expect(result.quality).toBe("poor");
     });
 
     it('should return "failed" for invalid image dimensions', async () => {
@@ -371,7 +362,6 @@ describe("ImageProcessor", () => {
         "/test/image.jpg",
         "test.jpg"
       );
-      expect(result.quality).toBe("failed");
     });
   });
 });

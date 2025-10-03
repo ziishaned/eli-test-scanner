@@ -7,11 +7,11 @@ POST /api/test-strips/upload
 - Accepts: multipart/form-data with image file
 - Validates image format (jpg, png)
 - Processes image including QR code extraction (see processing requirements)
-- Returns: { id, status, qrCode, qrCodeValid, quality, processedAt }
+- Returns: { id, status, qrCode, qrCodeValid, processedAt }
 
 GET /api/test-strips
 - Returns paginated list of submissions
-- Includes: id, qrCode, status, quality, thumbnailUrl, createdAt
+- Includes: id, qrCode, status, thumbnailUrl, createdAt
 
 GET /api/test-strips/:id
 - Returns detailed submission info

@@ -67,12 +67,6 @@ export const sampleListItems: TestStripListItem[] = sampleSubmissions.map(
     id: submission.id,
     qr_code: submission.qr_code,
     status: submission.status,
-    quality:
-      submission.status === "completed"
-        ? "good"
-        : submission.status === "failed"
-        ? "failed"
-        : "poor",
     thumbnail_url: submission.thumbnail_path
       ? `/uploads/${submission.thumbnail_path}`
       : undefined,

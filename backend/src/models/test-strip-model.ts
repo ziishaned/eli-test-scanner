@@ -59,12 +59,7 @@ export class TestStripModel {
         qr_code,
         status,
         thumbnail_path,
-        created_at,
-        CASE
-          WHEN status = 'completed' THEN 'good'
-          WHEN status IN ('qr_not_found', 'qr_invalid', 'qr_expired') THEN 'poor'
-          ELSE 'failed'
-        END as quality
+        created_at
       FROM test_strip_submissions
       ORDER BY created_at DESC
       LIMIT $1 OFFSET $2
@@ -79,7 +74,6 @@ export class TestStripModel {
       id: row.id,
       qr_code: row.qr_code,
       status: row.status,
-      quality: row.quality,
       thumbnail_url: row.thumbnail_path
         ? `/uploads/${row.thumbnail_path}`
         : undefined,

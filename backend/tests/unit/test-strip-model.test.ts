@@ -174,7 +174,6 @@ describe("TestStripModel", () => {
               status: "completed",
               thumbnail_path: "thumb_1.jpg",
               created_at: new Date("2024-01-01"),
-              quality: "good",
             },
             {
               id: "test-2",
@@ -182,7 +181,6 @@ describe("TestStripModel", () => {
               status: "qr_not_found",
               thumbnail_path: null,
               created_at: new Date("2024-01-02"),
-              quality: "poor",
             },
           ],
         });
@@ -195,7 +193,6 @@ describe("TestStripModel", () => {
             id: "test-1",
             qr_code: "ELI-2024-ABC123",
             status: "completed",
-            quality: "good",
             thumbnail_url: "/uploads/thumb_1.jpg",
             created_at: new Date("2024-01-01"),
           },
@@ -203,7 +200,6 @@ describe("TestStripModel", () => {
             id: "test-2",
             qr_code: null,
             status: "qr_not_found",
-            quality: "poor",
             thumbnail_url: undefined,
             created_at: new Date("2024-01-02"),
           },
@@ -249,32 +245,6 @@ describe("TestStripModel", () => {
         expect.stringContaining("LIMIT $1 OFFSET $2"),
         [5, 10]
       );
-    });
-
-    it("should map quality based on status correctly", async () => {
-      const pagination = { page: 1, limit: 10, offset: 0 };
-
-      mockDatabase.mockQuery
-        .mockResolvedValueOnce({ rows: [{ count: "4" }] })
-        .mockResolvedValueOnce({
-          rows: [
-            { id: "1", status: "completed", quality: "good" },
-            { id: "2", status: "qr_not_found", quality: "poor" },
-            { id: "3", status: "qr_invalid", quality: "poor" },
-            { id: "4", status: "failed", quality: "failed" },
-          ],
-        });
-
-      const result = await TestStripModel.findAll(pagination);
-
-      expect(
-        result.data.map((item) => ({ id: item.id, quality: item.quality }))
-      ).toEqual([
-        { id: "1", quality: "good" },
-        { id: "2", quality: "poor" },
-        { id: "3", quality: "poor" },
-        { id: "4", quality: "failed" },
-      ]);
     });
 
     it("should handle database errors during findAll", async () => {

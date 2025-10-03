@@ -70,7 +70,6 @@ export const createMockImageProcessingResult = (overrides = {}) => ({
     isValid: true,
     isExpired: false,
   },
-  quality: "good" as const,
   ...overrides,
 });
 

@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { DateTime } from "luxon";
-import { Submission, SubmissionStatus, Quality } from "./types";
+import { Submission, SubmissionStatus } from "./types";
 
 const { width } = Dimensions.get("window");
 
@@ -154,17 +154,6 @@ export default function Index() {
                 {item.qr_code && item.status === "completed"
                   ? "Valid"
                   : "Expired"}
-              </Text>
-            </View>
-          )}
-
-          {item.qr_code && (
-            <View style={styles.qualityRow}>
-              <Text style={styles.qualityText}>
-                Quality:{" "}
-                {item.quality
-                  ? item.quality.charAt(0).toUpperCase() + item.quality.slice(1)
-                  : "Unknown"}
               </Text>
             </View>
           )}
@@ -353,14 +342,6 @@ const styles = StyleSheet.create({
   qrValidText: {
     marginLeft: 6,
     fontSize: 12,
-    fontWeight: "500",
-  },
-  qualityRow: {
-    marginBottom: 8,
-  },
-  qualityText: {
-    fontSize: 12,
-    color: "#666",
     fontWeight: "500",
   },
   processedRow: {
