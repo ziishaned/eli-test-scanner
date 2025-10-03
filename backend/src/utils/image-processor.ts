@@ -8,8 +8,7 @@ import { ImageProcessingResult, QRCodeData } from "../types";
 const thumbnailSize = 200;
 
 export const processImage = async (
-  imagePath: string,
-  filename: string
+  imagePath: string
 ): Promise<ImageProcessingResult> => {
   try {
     const imageBuffer = await fs.readFile(imagePath);
@@ -23,7 +22,7 @@ export const processImage = async (
     const imageDimensions = `${dimensions.width}x${dimensions.height}`;
     const imageSize = stats.size;
 
-    const thumbnailPath = await generateThumbnail(imagePath, filename);
+    const thumbnailPath = await generateThumbnail(imagePath);
 
     const qrCode = await processTestStrip(imageBuffer);
 
@@ -41,11 +40,8 @@ export const processImage = async (
   }
 };
 
-const generateThumbnail = async (
-  imagePath: string,
-  originalFilename: string
-): Promise<string> => {
-  const ext = path.extname(originalFilename);
+const generateThumbnail = async (imagePath: string): Promise<string> => {
+  const ext = path.extname(imagePath);
   const thumbnailFilename = `thumb_${Date.now()}${ext}`;
   const thumbnailPath = path.join(
     process.cwd(),

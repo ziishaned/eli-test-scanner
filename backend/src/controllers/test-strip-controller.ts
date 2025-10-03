@@ -22,10 +22,7 @@ export const uploadTestStrip = async (
       return;
     }
 
-    const processingResult = await processImage(
-      req.file.path,
-      req.file.originalname
-    );
+    const processingResult = await processImage(req.file.path);
 
     const submission = await createTestStrip({
       qr_code: processingResult.qrCode?.qrCode,
