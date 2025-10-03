@@ -23,18 +23,23 @@ export const errorHandler = (
   err.statusCode = err.statusCode || 500;
 
   // Log error
-  console.error("Error:", {
-    message: err.message,
-    statusCode: err.statusCode,
-    stack: err.stack,
-    url: req.url,
-    method: req.method,
-    ip: req.ip,
-    userAgent: req.get("User-Agent"),
-  });
+  if (process.env.NODE_ENV === "development") {
+    console.error("Error:", {
+      message: err.message,
+      statusCode: err.statusCode,
+      stack: err.stack,
+      url: req.url,
+      method: req.method,
+      ip: req.ip,
+      userAgent: req.get("User-Agent"),
+    });
+  }
 
   // Send error response
-  if (process.env.NODE_ENV === "development") {
+  if (
+    process.env.NODE_ENV === "development" ||
+    process.env.NODE_ENV === "test"
+  ) {
     res.status(err.statusCode).json({
       error: err.message,
       statusCode: err.statusCode,

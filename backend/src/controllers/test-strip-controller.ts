@@ -69,10 +69,13 @@ export class TestStripController {
 
       res.status(201).json(response);
     } catch (error) {
-      console.error("Upload processing failed:", error);
       res.status(500).json({
         error: "Internal server error during image processing",
-        details: process.env.NODE_ENV === "development" ? error : undefined,
+        details:
+          process.env.NODE_ENV === "development" ||
+          process.env.NODE_ENV === "test"
+            ? error
+            : undefined,
       });
     }
   }
@@ -95,10 +98,13 @@ export class TestStripController {
 
       res.json(result);
     } catch (error) {
-      console.error("Failed to fetch test strips:", error);
       res.status(500).json({
         error: "Failed to fetch test strips",
-        details: process.env.NODE_ENV === "development" ? error : undefined,
+        details:
+          process.env.NODE_ENV === "development" ||
+          process.env.NODE_ENV === "test"
+            ? error
+            : undefined,
       });
     }
   }
@@ -143,10 +149,13 @@ export class TestStripController {
 
       res.json(response);
     } catch (error) {
-      console.error("Failed to fetch test strip:", error);
       res.status(500).json({
         error: "Failed to fetch test strip",
-        details: process.env.NODE_ENV === "development" ? error : undefined,
+        details:
+          process.env.NODE_ENV === "development" ||
+          process.env.NODE_ENV === "test"
+            ? error
+            : undefined,
       });
     }
   }

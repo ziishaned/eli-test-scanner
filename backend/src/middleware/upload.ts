@@ -25,7 +25,11 @@ const fileFilter = (
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file type. Only JPG and PNG files are allowed."));
+    const error = new Error(
+      "Invalid file type. Only JPG and PNG files are allowed."
+    );
+    error.name = "MulterError";
+    cb(error);
   }
 };
 

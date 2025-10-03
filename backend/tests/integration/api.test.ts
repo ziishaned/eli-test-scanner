@@ -43,7 +43,7 @@ const createTestApp = () => {
   return app;
 };
 
-describe.skip("Test Strip API Integration Tests", () => {
+describe("Test Strip API Integration Tests", () => {
   let app: express.Application;
   let mockImageProcessor: jest.Mocked<
     typeof import("../../src/utils/image-processor").ImageProcessor
@@ -377,7 +377,30 @@ describe.skip("Test Strip API Integration Tests", () => {
       const response = await request(app).get("/api/test-strips");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockSubmissions);
+      expect(response.body).toEqual({
+        data: [
+          {
+            id: "test-1",
+            qr_code: "ELI-2024-ABC123",
+            status: "completed",
+            quality: "good",
+            thumbnail_url: "/uploads/thumb_1.jpg",
+            created_at: "2024-01-01T00:00:00.000Z",
+          },
+          {
+            id: "test-2",
+            status: "qr_not_found",
+            quality: "poor",
+            created_at: "2024-01-02T00:00:00.000Z",
+          },
+        ],
+        pagination: {
+          page: 1,
+          limit: 20,
+          total: 25,
+          total_pages: 2,
+        },
+      });
       expect(mockTestStripModel.findAll).toHaveBeenCalledWith({
         page: 1,
         limit: 20,
@@ -451,7 +474,7 @@ describe.skip("Test Strip API Integration Tests", () => {
 
   describe("GET /api/test-strips/:id", () => {
     it("should return submission details by ID", async () => {
-      const testId = "test-id-123";
+      const testId = "12345678-1234-4123-a123-123456789012";
       const mockSubmission = {
         id: testId,
         qr_code: "ELI-2024-ABC123",
@@ -470,7 +493,14 @@ describe.skip("Test Strip API Integration Tests", () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        ...mockSubmission,
+        id: testId,
+        qr_code: "ELI-2024-ABC123",
+        original_image_path: "original.jpg",
+        thumbnail_path: "thumb.jpg",
+        image_size: 1024000,
+        image_dimensions: "1920x1080",
+        status: "completed",
+        created_at: "2024-01-01T00:00:00.000Z",
         originalImageUrl: "/uploads/original.jpg",
         thumbnailUrl: "/uploads/thumb.jpg",
         quality: "good",
@@ -479,7 +509,7 @@ describe.skip("Test Strip API Integration Tests", () => {
     });
 
     it("should return 404 for non-existent submission", async () => {
-      const testId = "non-existent-id";
+      const testId = "12345678-1234-4123-a123-123456789999";
 
       mockTestStripModel.findById.mockResolvedValue(null);
 
@@ -513,7 +543,7 @@ describe.skip("Test Strip API Integration Tests", () => {
       ];
 
       for (const { status, expectedQuality } of testCases) {
-        const testId = `12345678-1234-1234-1234-123456789012`;
+        const testId = `12345678-1234-4123-a123-123456789012`;
         const mockSubmission = {
           id: testId,
           qr_code: "ELI-2024-ABC123",
@@ -536,7 +566,7 @@ describe.skip("Test Strip API Integration Tests", () => {
     });
 
     it("should handle database errors", async () => {
-      const testId = "12345678-1234-1234-1234-123456789012";
+      const testId = "12345678-1234-4123-a123-123456789012";
 
       mockTestStripModel.findById.mockRejectedValue(
         new Error("Database error")
@@ -554,12 +584,14 @@ describe.skip("Test Strip API Integration Tests", () => {
 
   describe("Error Handling", () => {
     it("should handle 404 for unknown routes", async () => {
-      const response = await request(app).get("/api/test-strips/unknown-route");
+      const response = await request(app).get(
+        "/api/test-strips/nonexistent-endpoint/extra"
+      );
 
       expect(response.status).toBe(404);
       expect(response.body).toEqual({
         error: "Route not found",
-        message: "Cannot GET /api/test-strips/unknown-route",
+        message: "Cannot GET /api/test-strips/nonexistent-endpoint/extra",
       });
     });
 

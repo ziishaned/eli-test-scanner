@@ -13,6 +13,8 @@
     "test:ci": "jest --ci --coverage --watchAll=false"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
     "@types/cors": "^2.8.19",
     "@types/express": "~5.0.3",
     "@types/jest": "^30.0.0",
@@ -22,6 +24,7 @@
     "@types/pg": "~8.15.5",
     "@types/supertest": "^6.0.3",
     "@types/uuid": "^10.0.0",
+    "babel-jest": "^30.2.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4",
