@@ -5,8 +5,16 @@
   "author": "Zeeshan Ahmad <ziishaned@gmail.com>",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "mobile",
-    "backend"
-  ]
+  "workspaces": {
+    "packages": [
+      "mobile",
+      "backend"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native-*",
+      "**/expo",
+      "**/expo-*"
+    ]
+  }
 }
