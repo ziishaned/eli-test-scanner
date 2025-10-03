@@ -117,12 +117,10 @@ export default function CameraScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, capturedImage && styles.previewContainer]}
-    >
+    <View style={[styles.container, capturedImage && styles.previewContainer]}>
       {capturedImage ? (
         // Preview Mode
-        <>
+        <SafeAreaView style={{ flex: 1 }}>
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity style={styles.headerButton} onPress={handleClose}>
@@ -167,53 +165,59 @@ export default function CameraScreen() {
               <Text style={styles.primaryButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
-        </>
+        </SafeAreaView>
       ) : (
         // Camera Mode
-        <Camera
-          ref={cameraRef}
-          style={styles.camera}
-          device={device}
-          isActive={true}
-          photo={true}
-        >
-          {/* Top Controls */}
-          <View style={styles.topControls}>
-            <TouchableOpacity
-              style={styles.topButton}
-              onPress={() => router.back()}
+        <View style={styles.cameraContainer}>
+          <View style={styles.cameraViewContainer}>
+            <Camera
+              ref={cameraRef}
+              style={styles.camera}
+              device={device}
+              isActive={true}
+              photo={true}
             >
-              <Ionicons name="close" size={28} color="white" />
-            </TouchableOpacity>
+              {/* Top Controls */}
+              <View style={styles.topControls}>
+                <TouchableOpacity
+                  style={styles.topButton}
+                  onPress={() => router.back()}
+                >
+                  <Ionicons name="close" size={28} color="white" />
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.topButton}
-              onPress={toggleCameraFacing}
-            >
-              <Ionicons name="camera-reverse" size={28} color="white" />
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.topButton}
+                  onPress={toggleCameraFacing}
+                >
+                  <Ionicons name="camera-reverse" size={28} color="white" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Camera Frame Overlay */}
+              <View style={styles.frameOverlay}>
+                <View style={styles.frame} />
+                <Text style={styles.frameText}>
+                  Position the test strip within the frame
+                </Text>
+              </View>
+            </Camera>
           </View>
 
-          {/* Camera Frame Overlay */}
-          <View style={styles.frameOverlay}>
-            <View style={styles.frame} />
-            <Text style={styles.frameText}>
-              Position the test strip within the frame
-            </Text>
+          {/* Bottom Controls - Outside Camera */}
+          <View style={styles.bottomControlsArea}>
+            <View style={styles.bottomControls}>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={takePicture}
+              >
+                <View style={styles.captureButtonInner} />
+              </TouchableOpacity>
+            </View>
           </View>
-
-          {/* Bottom Controls */}
-          <View style={styles.bottomControls}>
-            <TouchableOpacity
-              style={styles.captureButton}
-              onPress={takePicture}
-            >
-              <View style={styles.captureButtonInner} />
-            </TouchableOpacity>
-          </View>
-        </Camera>
+        </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -261,6 +265,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: "black",
+  },
+  cameraViewContainer: {
+    flex: 1,
+    position: "relative",
+  },
   camera: {
     flex: 1,
   },
@@ -306,27 +318,39 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
   },
+  bottomControlsArea: {
+    height: 120,
+    backgroundColor: "black",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   bottomControls: {
-    position: "absolute",
-    bottom: 50,
-    left: 0,
-    right: 0,
     alignItems: "center",
   },
   captureButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 4,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderColor: "rgba(0, 0, 0, 0.3)",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+    marginVertical: 10,
   },
   captureButtonInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: "white",
   },
   // Preview styles
