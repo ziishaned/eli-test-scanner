@@ -29,29 +29,39 @@ export default function Index() {
       id: "1",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
-      qrCode: "QR12345",
+      qrCode: "ELI-2025-001",
       qrCodeValid: true,
       status: "completed",
-      quality: "good",
+      quality: "basic brightness",
       processedAt: DateTime.fromISO("2024-10-01T10:30:00").toJSDate(),
     },
     {
       id: "2",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
-      status: "qr_not_found",
-      quality: "poor",
+      qrCode: "ELI-2025-002",
+      qrCodeValid: true,
+      status: "completed",
+      quality: "blur detection",
       processedAt: DateTime.fromISO("2024-10-01T09:15:00").toJSDate(),
     },
     {
       id: "3",
       imageUri: "https://placehold.jp/200x200.png",
       timestamp: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
-      qrCode: "EXPIRED123",
+      qrCode: "ELI-2024-999",
       qrCodeValid: false,
       status: "qr_expired",
-      quality: "good",
+      quality: "basic brightness",
       processedAt: DateTime.fromISO("2024-09-30T16:45:00").toJSDate(),
+    },
+    {
+      id: "4",
+      imageUri: "https://placehold.jp/200x200.png",
+      timestamp: DateTime.fromISO("2024-09-30T14:20:00").toJSDate(),
+      status: "qr_not_found",
+      quality: "failed",
+      processedAt: DateTime.fromISO("2024-09-30T14:20:00").toJSDate(),
     },
   ];
 
@@ -158,30 +168,46 @@ export default function Index() {
         <Image source={{ uri: item.imageUri }} style={styles.thumbnail} />
 
         <View style={styles.submissionInfo}>
-          <View style={styles.statusRow}>
-            {getStatusIcon(item.status)}
-            <Text style={styles.timestampText}>
-              {formatTimestamp(item.timestamp)}
-            </Text>
-          </View>
-
-          <View style={styles.qrRow}>
+          <View style={styles.qrCodeMainRow}>
             <Ionicons
               name={qrStatus.icon as any}
-              size={16}
+              size={18}
               color={qrStatus.color}
             />
-            <Text style={[styles.qrText, { color: qrStatus.color }]}>
-              {qrStatus.text}
+            <Text style={[styles.qrCodeMainText, { color: qrStatus.color }]}>
+              {item.qrCode ? item.qrCode : "No QR code"}
             </Text>
           </View>
 
-          <View style={styles.qualityRow}>
-            <Text style={styles.qualityText}>
-              Quality:{" "}
-              {item.quality.charAt(0).toUpperCase() + item.quality.slice(1)}
-            </Text>
-          </View>
+          {item.qrCode && (
+            <View style={styles.statusDetailRow}>
+              <Text style={styles.statusText}>
+                Status: {item.qrCodeValid ? "Valid" : "Expired"}
+              </Text>
+            </View>
+          )}
+
+          {item.qrCode && (
+            <View style={styles.qualityRow}>
+              <Text style={styles.qualityText}>
+                Quality:{" "}
+                {item.quality
+                  ? item.quality.charAt(0).toUpperCase() + item.quality.slice(1)
+                  : "Unknown"}
+              </Text>
+            </View>
+          )}
+
+          {item.processedAt && (
+            <View style={styles.processedRow}>
+              <Text style={styles.processedText}>
+                Processed:{" "}
+                {DateTime.fromJSDate(item.processedAt).toLocaleString(
+                  DateTime.DATETIME_SHORT
+                )}
+              </Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -265,12 +291,30 @@ const styles = StyleSheet.create({
   },
   submissionInfo: {
     flex: 1,
-    justifyContent: "space-between",
+  },
+  qrCodeMainRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  qrCodeMainText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: "600",
+    flex: 1,
   },
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
+  },
+  statusDetailRow: {
+    marginBottom: 8,
+  },
+  statusText: {
+    fontSize: 12,
+    color: "#666",
+    fontWeight: "600",
   },
   timestampText: {
     marginLeft: 8,
@@ -288,13 +332,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  qrValidRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  qrValidText: {
+    marginLeft: 6,
+    fontSize: 12,
+    fontWeight: "500",
+  },
   qualityRow: {
-    marginTop: 4,
+    marginBottom: 8,
   },
   qualityText: {
     fontSize: 12,
     color: "#666",
     fontWeight: "500",
+  },
+  processedRow: {
+    marginBottom: 0,
+  },
+  processedText: {
+    fontSize: 11,
+    color: "#999",
+    fontStyle: "italic",
   },
   confidenceText: {
     fontSize: 12,

@@ -6,7 +6,7 @@ export type SubmissionStatus =
   | "qr_invalid"
   | "qr_expired";
 
-export type Quality = "good" | "poor" | "failed";
+export type Quality = "failed" | "basic brightness" | "blur detection";
 
 export interface Submission {
   id: string;
