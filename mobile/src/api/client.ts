@@ -1,10 +1,11 @@
 import axios from "axios";
 
-const apiClient = axios.create({
-  timeout: 10000,
-  baseURL: "https://0e251d280bf8.ngrok-free.app",
-});
+const baseURL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+const uploadsBaseURL = `${baseURL}/uploads`;
 
-const uploadsBaseURL = `${apiClient.defaults.baseURL}/uploads`;
+const apiClient = axios.create({
+  baseURL,
+  timeout: 10000,
+});
 
 export { apiClient, uploadsBaseURL };

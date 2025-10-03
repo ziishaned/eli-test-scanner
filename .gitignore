@@ -3,3 +3,4 @@ uploads/*
 !uploads/.gitkeep
 .DS_Store
 node_modules/
+.env
