@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Submission, QRCodeData } from "./types";
 
 const { width } = Dimensions.get("window");
@@ -187,6 +188,14 @@ export default function Index() {
           </View>
         }
       />
+
+      <TouchableOpacity
+        style={styles.fab}
+        activeOpacity={0.8}
+        onPress={() => router.push("/camera" as any)}
+      >
+        <Ionicons name="camera" size={28} color="white" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -299,5 +308,24 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
 });
