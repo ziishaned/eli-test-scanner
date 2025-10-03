@@ -59,7 +59,6 @@ export default function DetailsScreen() {
 
       const data = await response.json();
 
-      // Transform the API response to match our interface
       const transformedData: SubmissionData = {
         id: data.id,
         qr_code: data.qr_code,
@@ -85,7 +84,6 @@ export default function DetailsScreen() {
     }
   };
 
-  // Show loading state
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -95,7 +93,6 @@ export default function DetailsScreen() {
     );
   }
 
-  // Show error state
   if (error || !submissionData) {
     return (
       <View style={styles.centerContainer}>
@@ -297,7 +294,7 @@ const styles = StyleSheet.create({
   },
   detailsSection: {
     flex: 1,
-    marginTop: 180, // Start after image with slight overlap
+    marginTop: 180,
     backgroundColor: "white",
     paddingTop: 20,
     zIndex: 2,

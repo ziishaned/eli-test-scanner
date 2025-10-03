@@ -56,7 +56,6 @@ export default function Index() {
         setSubmissions(resJSON.data);
       }
 
-      // Update pagination state
       setPage(resJSON.pagination.page);
       setHasNextPage(resJSON.pagination.page < resJSON.pagination.total_pages);
       setIsOffline(false);

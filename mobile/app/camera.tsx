@@ -83,7 +83,6 @@ export default function CameraScreen() {
   const uploadImage = async (imageUri: string) => {
     const formData = new FormData();
 
-    // Create file object for the image
     const imageFile = {
       uri: imageUri,
       type: "image/jpeg",
