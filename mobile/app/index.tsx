@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Image } from "expo-image";
 import {
   View,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { eliCodeToLabelMap, statusLabelMap } from "../constants";
 import { formatDate } from "../src/utils/formatters";
 import { getTestStrips, SubmissionData } from "../src/api/test-strips";
@@ -28,6 +28,12 @@ export default function Index() {
   useEffect(() => {
     loadSubmissions();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSubmissions();
+    }, [])
+  );
 
   const loadSubmissions = async (
     pageNum: number = 1,
