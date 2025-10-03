@@ -8,11 +8,17 @@ export default function RootLayout() {
         options={{ title: "Test strip submissions" }}
       />
       <Stack.Screen
+        name="details"
+        options={{
+          headerShown: false,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
         name="camera"
         options={{
-          presentation: "modal",
           headerShown: false,
-          gestureEnabled: true,
+          presentation: "modal",
         }}
       />
     </Stack>

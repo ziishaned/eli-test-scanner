@@ -164,7 +164,10 @@ export default function Index() {
     const qrStatus = getQRCodeStatus(item);
 
     return (
-      <TouchableOpacity style={styles.submissionItem}>
+      <TouchableOpacity
+        style={styles.submissionItem}
+        onPress={() => router.push(`/details?id=${item.id}` as any)}
+      >
         <Image source={{ uri: item.imageUri }} style={styles.thumbnail} />
 
         <View style={styles.submissionInfo}>
