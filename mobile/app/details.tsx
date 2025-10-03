@@ -50,7 +50,7 @@ export default function DetailsScreen() {
       setError(null);
 
       const response = await fetch(
-        `https://49c0ac3e2d43.ngrok-free.app/api/test-strips/${id}`
+        `https://0e251d280bf8.ngrok-free.app/api/test-strips/${id}`
       );
 
       if (!response.ok) {

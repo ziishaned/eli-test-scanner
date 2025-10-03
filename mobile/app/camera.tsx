@@ -93,7 +93,7 @@ export default function CameraScreen() {
     formData.append("image", imageFile);
 
     const response = await fetch(
-      "https://49c0ac3e2d43.ngrok-free.app/api/test-strips/upload",
+      "https://0e251d280bf8.ngrok-free.app/api/test-strips/upload",
       {
         method: "POST",
         body: formData,

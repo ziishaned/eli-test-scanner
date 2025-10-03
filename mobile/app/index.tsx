@@ -37,7 +37,7 @@ export default function Index() {
       }
 
       const res = await fetch(
-        `https://49c0ac3e2d43.ngrok-free.app/api/test-strips?page=${pageNum}&limit=20`
+        `https://0e251d280bf8.ngrok-free.app/api/test-strips?page=${pageNum}&limit=20`
       );
 
       if (!res.ok) {
