@@ -107,23 +107,23 @@ export default function Index() {
             {eliCodeToLabelMap[item.qr_code] ?? eliCodeToLabelMap["No QR Code"]}
           </Text>
 
+          {item.qr_code && (
+            <Text style={styles.statusText}>QR code: {item.qr_code}</Text>
+          )}
+
           {item.status && (
-            <View style={styles.statusDetailRow}>
-              <Text style={styles.statusText}>
-                Status: {statusLabelMap[item.status]}
-              </Text>
-            </View>
+            <Text style={styles.statusText}>
+              Status: {statusLabelMap[item.status]}
+            </Text>
           )}
 
           {item.created_at && (
-            <View style={styles.processedRow}>
-              <Text style={styles.processedText}>
-                Created At:{" "}
-                {DateTime.fromJSDate(new Date(item.created_at)).toLocaleString(
-                  DateTime.DATETIME_SHORT
-                )}
-              </Text>
-            </View>
+            <Text style={styles.processedText}>
+              Created At:{" "}
+              {DateTime.fromJSDate(new Date(item.created_at)).toLocaleString(
+                DateTime.DATETIME_SHORT
+              )}
+            </Text>
           )}
         </View>
       </TouchableOpacity>
@@ -163,7 +163,7 @@ export default function Index() {
       <View style={styles.offlineContainer}>
         <StatusBar style="dark" />
         <Ionicons name="wifi-outline" size={64} color="#9E9E9E" />
-        <Text style={styles.offlineText}>You're offline</Text>
+        <Text style={styles.offlineText}>You are offline</Text>
         <Text style={styles.offlineSubtext}>
           Please check your internet connection and try again
         </Text>
@@ -250,55 +250,17 @@ const styles = StyleSheet.create({
   },
   submissionInfo: {
     flex: 1,
-  },
-  qrCodeMainRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
+    gap: 6,
+    justifyContent: "center",
   },
   qrCodeMainText: {
     fontSize: 16,
     fontWeight: "600",
-    flex: 1,
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  statusDetailRow: {
-    marginBottom: 8,
   },
   statusText: {
     fontSize: 12,
     color: "#666",
     fontWeight: "600",
-  },
-  timestampText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "500",
-  },
-  qrRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  qrText: {
-    marginLeft: 6,
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  qrValidRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  qrValidText: {
-    marginLeft: 6,
-    fontSize: 12,
-    fontWeight: "500",
   },
   processedRow: {
     marginBottom: 0,
