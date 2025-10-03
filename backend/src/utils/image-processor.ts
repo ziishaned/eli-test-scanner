@@ -25,7 +25,7 @@ export const processImage = async (
 
     const thumbnailPath = await generateThumbnail(imagePath, filename);
 
-    const qrCode = await extractQRCode(imageBuffer);
+    const qrCode = await processTestStrip(imageBuffer);
 
     return {
       thumbnailPath,
@@ -65,7 +65,7 @@ const generateThumbnail = async (
   return thumbnailFilename;
 };
 
-const extractQRCode = async (imageBuffer: Buffer): Promise<QRCodeData> => {
+const processTestStrip = async (imageBuffer: Buffer): Promise<QRCodeData> => {
   try {
     const sharpImg = sharp(imageBuffer).resize({
       width: 800,
@@ -84,33 +84,33 @@ const extractQRCode = async (imageBuffer: Buffer): Promise<QRCodeData> => {
     if (!code) {
       return {
         status: "invalid",
-        errorMessage: "QR code not found",
+        error: "QR code not found",
       };
     }
 
     const qrCode = code.data;
     if (qrCode === "ELI-2024-999") {
       return {
-        data: qrCode,
+        qrCode,
         status: "expired",
-        errorMessage: "Test strip expired",
+        error: "Test strip expired",
       };
     } else if (qrCode.startsWith("ELI-2025")) {
       return {
-        data: qrCode,
+        qrCode,
         status: "valid",
       };
     } else {
       return {
-        data: qrCode,
+        qrCode,
         status: "invalid",
-        errorMessage: "Unknown QR code format",
+        error: "Unknown QR code format",
       };
     }
   } catch (error) {
     return {
       status: "invalid",
-      errorMessage: "Error processing QR code",
+      error: "Error processing QR code",
     };
   }
 };

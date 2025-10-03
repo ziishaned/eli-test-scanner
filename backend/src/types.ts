@@ -21,8 +21,8 @@ export interface TestStripListItem {
 }
 
 export interface QRCodeData {
-  data?: string;
-  errorMessage?: string;
+  qrCode?: string;
+  error?: string;
   status: SubmissionStatus;
 }
 

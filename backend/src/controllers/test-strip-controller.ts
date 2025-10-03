@@ -28,13 +28,13 @@ export const uploadTestStrip = async (
     );
 
     const submission = await createTestStrip({
-      qr_code: processingResult.qrCode?.data,
+      qr_code: processingResult.qrCode?.qrCode,
       original_image_path: req.file.filename,
       thumbnail_path: processingResult.thumbnailPath,
       image_size: processingResult.imageSize,
       image_dimensions: processingResult.imageDimensions,
       status: processingResult.qrCode?.status,
-      error_message: processingResult.qrCode?.errorMessage,
+      error_message: processingResult.qrCode?.error,
     });
 
     res.status(201).json({
