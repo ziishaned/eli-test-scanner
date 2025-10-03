@@ -26,9 +26,9 @@ export default function DetailsScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      loadSubmissionDetails();
-    }
+    if (!id) return;
+
+    loadSubmissionDetails();
   }, [id]);
 
   const loadSubmissionDetails = useCallback(async () => {
@@ -50,11 +50,6 @@ export default function DetailsScreen() {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (id) {
-      loadSubmissionDetails();
-    }
-  }, [id, loadSubmissionDetails]);
   if (loading) {
     return (
       <View style={styles.centerContainer}>

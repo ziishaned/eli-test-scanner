@@ -33,9 +33,7 @@ export default function Index() {
     append: boolean = false
   ) => {
     try {
-      if (!append) {
-        setLoading(true);
-      }
+      if (!append) setLoading(true);
 
       const result = await getTestStrips(pageNum, 20);
 
