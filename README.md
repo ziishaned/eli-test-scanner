@@ -124,13 +124,19 @@ cd mobile
 yarn install
 ```
 
-2. **Start the development server**:
+2. **Set up environment variables** in `mobile/.env`:
+
+```env
+cp mobile/.env.example mobile/.env
+```
+
+3. **Start the development server**:
 
 ```bash
 yarn start
 ```
 
-3. **Run on specific platforms**:
+4. **Run on specific platforms**:
 
 ```bash
 # Android
@@ -150,9 +156,7 @@ The backend provides the following endpoints:
 - **GET** `/health` - Health check endpoint
 - **GET** `/uploads/:filename` - Serve uploaded images
 
-## Testing
-
-### Backend Tests
+## Backend Tests
 
 ```bash
 cd backend
