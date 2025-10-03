@@ -156,6 +156,22 @@ The backend provides the following endpoints:
 - **GET** `/health` - Health check endpoint
 - **GET** `/uploads/:filename` - Serve uploaded images
 
+### Testing with Postman
+
+A Postman collection is included in the repository (`postman_collection.json`) with pre-configured API requests.
+
+To import the collection:
+
+1. Open Postman
+2. Click **Import** button
+3. Select **File** tab
+4. Choose `postman_collection.json` from the project root
+5. Click **Import**
+
+Make sure to set up environment variables in Postman:
+
+- `url`: Your backend URL (e.g., `http://localhost:3000/api` for local development)
+
 ## Backend Tests
 
 ```bash

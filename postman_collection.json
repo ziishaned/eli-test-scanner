@@ -1,0 +1,93 @@
+{
+  "info": {
+    "_postman_id": "f41928e0-b17a-4c90-922d-ff0b76565ead",
+    "name": "eli-test-scanner",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "21843530"
+  },
+  "item": [
+    {
+      "name": "upload",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "image",
+              "type": "file",
+              "src": "/Users/zeeshan/Desktop/test-strip-expired.png"
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "src": "/Users/zeeshan/Desktop/test-strip-valid-2.png",
+              "disabled": true
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "src": "/Users/zeeshan/Desktop/test-strip-no-qr.png",
+              "disabled": true
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "src": "/Users/zeeshan/Desktop/test-strip-valid-2.jpg",
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{url}}/test-strips/upload",
+          "host": ["{{url}}"],
+          "path": ["test-strips", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "history",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://49c0ac3e2d43.ngrok-free.app/api/test-strips?limit=20",
+          "protocol": "https",
+          "host": ["49c0ac3e2d43", "ngrok-free", "app"],
+          "path": ["api", "test-strips"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "details",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/test-strips/202b1446-a410-41a5-9030-1a85f3f6a5cf",
+          "host": ["{{url}}"],
+          "path": ["test-strips", "202b1446-a410-41a5-9030-1a85f3f6a5cf"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
