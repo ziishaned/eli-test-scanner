@@ -1,6 +1,4 @@
 import path from "path";
-import fs from "fs/promises";
-import { ImageProcessingResult } from "../src/types";
 import { processImage } from "../src/utils/image-processor";
 
 describe("Test Strip Processing", () => {
