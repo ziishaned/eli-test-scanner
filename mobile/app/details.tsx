@@ -49,7 +49,7 @@ export default function DetailsScreen() {
       setError(null);
 
       const response = await fetch(
-        `http://localhost:3000/api/test-strips/${id}`
+        `https://49c0ac3e2d43.ngrok-free.app/api/test-strips/${id}`
       );
 
       if (!response.ok) {
@@ -70,7 +70,7 @@ export default function DetailsScreen() {
         status: data.status,
         error_message: data.error_message,
         created_at: data.created_at,
-        originalImageUrl: `http://localhost:3000${data.originalImageUrl}`,
+        originalImageUrl: `https://49c0ac3e2d43.ngrok-free.app${data.originalImageUrl}`,
         quality: data.quality,
       };
 

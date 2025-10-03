@@ -10,6 +10,7 @@ import {
   Alert,
   Dimensions,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -40,7 +41,7 @@ export default function Index() {
       }
 
       const res = await fetch(
-        `http://localhost:3000/api/test-strips?page=${pageNum}&limit=20`
+        `https://49c0ac3e2d43.ngrok-free.app/api/test-strips?page=${pageNum}&limit=20`
       );
 
       if (!res.ok) {
@@ -144,7 +145,7 @@ export default function Index() {
         <Image
           source={{
             uri: item.thumbnail_url
-              ? `http://localhost:3000${item.thumbnail_url}`
+              ? `https://49c0ac3e2d43.ngrok-free.app${item.thumbnail_url}`
               : undefined,
           }}
           style={styles.thumbnail}
@@ -230,6 +231,7 @@ export default function Index() {
   if (isOffline) {
     return (
       <View style={styles.offlineContainer}>
+        <StatusBar style="dark" />
         <Ionicons name="wifi-outline" size={64} color="#9E9E9E" />
         <Text style={styles.offlineText}>You're offline</Text>
         <Text style={styles.offlineSubtext}>
@@ -247,6 +249,7 @@ export default function Index() {
 
   return (
     <>
+      <StatusBar style="dark" />
       <FlatList
         data={submissions}
         renderItem={renderSubmissionItem}
