@@ -5,25 +5,15 @@ export interface TestStripSubmission {
   thumbnail_path?: string;
   image_size: number;
   image_dimensions: string;
-  status: SubmissionStatus;
+  status?: "valid" | "invalid" | "expired";
   error_message?: string;
-  created_at: Date;
-}
-
-export type SubmissionStatus = "valid" | "invalid" | "expired";
-
-export interface TestStripListItem {
-  id: string;
-  qr_code?: string;
-  status: SubmissionStatus;
-  thumbnail_url?: string;
   created_at: Date;
 }
 
 export interface QRCodeData {
   qrCode?: string;
   error?: string;
-  status: SubmissionStatus;
+  status: TestStripSubmission["status"];
 }
 
 export interface ImageProcessingResult {

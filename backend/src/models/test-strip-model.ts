@@ -1,21 +1,13 @@
 import { pool } from "../database";
 import {
   TestStripSubmission,
-  SubmissionStatus,
   PaginationParams,
   PaginatedResponse,
-  TestStripListItem,
 } from "../types";
 
-export const createTestStrip = async (data: {
-  qr_code?: string;
-  original_image_path: string;
-  thumbnail_path?: string;
-  image_size: number;
-  image_dimensions: string;
-  status?: SubmissionStatus;
-  error_message?: string;
-}): Promise<TestStripSubmission> => {
+export const createTestStrip = async (
+  data: Omit<TestStripSubmission, "id" | "created_at">
+): Promise<TestStripSubmission> => {
   const query = `
     INSERT INTO test_strip_submissions
     (qr_code, original_image_path, thumbnail_path, image_size, image_dimensions, status, error_message)
@@ -47,7 +39,7 @@ export const findTestStripById = async (
 
 export const findAllTestStrips = async (
   pagination: PaginationParams
-): Promise<PaginatedResponse<TestStripListItem>> => {
+): Promise<PaginatedResponse<TestStripSubmission>> => {
   const countQuery = "SELECT COUNT(*) FROM test_strip_submissions";
   const countResult = await pool.query(countQuery);
   const total = parseInt(countResult.rows[0].count);
@@ -67,19 +59,8 @@ export const findAllTestStrips = async (
 
   const result = await pool.query(query, [pagination.limit, pagination.offset]);
 
-  const data: TestStripListItem[] = result.rows.map((row) => ({
-    id: row.id,
-    qr_code: row.qr_code,
-    status: row.status,
-    error_message: row.error_message,
-    thumbnail_url: row.thumbnail_path
-      ? `/uploads/${row.thumbnail_path}`
-      : undefined,
-    created_at: row.created_at,
-  }));
-
   return {
-    data,
+    data: result.rows,
     pagination: {
       page: pagination.page,
       limit: pagination.limit,

@@ -5,7 +5,6 @@ export interface SubmissionData {
   qr_code?: string;
   original_image_path: string;
   thumbnail_path?: string;
-  thumbnail_url?: string;
   image_size: number;
   image_dimensions: string;
   status: "valid" | "invalid" | "expired";

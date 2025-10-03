@@ -34,13 +34,7 @@ export const uploadTestStrip = async (
       error_message: processingResult.qrCode?.error,
     });
 
-    res.status(201).json({
-      ...submission,
-      originalImageUrl: `/uploads/${submission.original_image_path}`,
-      thumbnailUrl: submission.thumbnail_path
-        ? `/uploads/${submission.thumbnail_path}`
-        : null,
-    });
+    res.status(201).json(submission);
   } catch (error) {
     res.status(500).json({
       error: "Internal server error during image processing",
@@ -96,13 +90,7 @@ export const getTestStripById = async (
       return;
     }
 
-    res.json({
-      ...submission,
-      originalImageUrl: `/uploads/${submission.original_image_path}`,
-      thumbnailUrl: submission.thumbnail_path
-        ? `/uploads/${submission.thumbnail_path}`
-        : null,
-    });
+    res.json(submission);
   } catch (error) {
     res.status(500).json({
       error: "Failed to fetch test strip",

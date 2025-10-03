@@ -112,11 +112,6 @@ describe("POST /api/test-strips/upload - Upload Test Strip API Flow", () => {
     expect(response.body).toHaveProperty("status", "valid");
     expect(response.body).toHaveProperty("error_message", null);
     expect(response.body).toHaveProperty("created_at");
-    expect(response.body).toHaveProperty("originalImageUrl");
-    expect(response.body).toHaveProperty("thumbnailUrl");
-
-    expect(response.body.originalImageUrl).toMatch(/^\/uploads\/.+$/);
-    expect(response.body.thumbnailUrl).toMatch(/^\/uploads\/.+$/);
 
     expect(response.body.image_size).toBeGreaterThan(0);
     expect(response.body.image_dimensions).toHaveProperty("width");

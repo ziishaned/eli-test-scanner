@@ -82,8 +82,8 @@ export default function Index() {
       >
         <Image
           source={{
-            uri: item.thumbnail_url
-              ? `${uploadsBaseURL}/${item.thumbnail_url}`
+            uri: item.thumbnail_path
+              ? `${uploadsBaseURL}/${item.thumbnail_path}`
               : undefined,
           }}
           style={styles.thumbnail}
