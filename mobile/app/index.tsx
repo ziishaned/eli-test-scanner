@@ -86,40 +86,20 @@ export default function Index() {
     setRefreshing(false);
   };
 
-  const getQRCodeStatus = (submission: any) => {
-    const { status, qr_code } = submission;
-    const qrCodeValid = qr_code && status === "completed";
+  const eliCodeToLabelMap = {
+    "ELI-2025-001": "Valid Test Strip 1",
+    "ELI-2025-002": "Valid Test Strip 2",
+    "ELI-2024-999": "Expired Test Strip",
+    "No QR Code": "Invalid Test Strip",
+  };
 
-    if (status === "processing") {
-      return { icon: "scan-outline", color: "#9E9E9E", text: "Processing..." };
-    }
-
-    if (status === "qr_not_found") {
-      return { color: "#F44336", text: "No QR code found" };
-    }
-
-    if (status === "qr_invalid") {
-      return { color: "#F44336", text: "QR code invalid" };
-    }
-
-    if (status === "qr_expired") {
-      return { color: "#FF5722", text: "QR code expired" };
-    }
-
-    if (status === "failed") {
-      return { color: "#F44336", text: "Processing failed" };
-    }
-
-    if (qr_code && qrCodeValid) {
-      return { color: "#4CAF50", text: `QR: ${qr_code}` };
-    }
-
-    return { color: "#9E9E9E", text: "Unknown status" };
+  const statusLabelMap = {
+    valid: "Valid",
+    invalid: "Invalid",
+    expired: "Expired",
   };
 
   const renderSubmissionItem = ({ item }: { item: any }) => {
-    const qrStatus = getQRCodeStatus(item);
-
     return (
       <TouchableOpacity
         style={styles.submissionItem}
@@ -135,17 +115,14 @@ export default function Index() {
         />
 
         <View style={styles.submissionInfo}>
-          <Text style={[styles.qrCodeMainText, { color: qrStatus.color }]}>
-            {item.qr_code ? item.qr_code : "No QR code"}
+          <Text style={styles.qrCodeMainText}>
+            {eliCodeToLabelMap[item.qr_code] ?? eliCodeToLabelMap["No QR Code"]}
           </Text>
 
-          {item.qr_code && (
+          {item.status && (
             <View style={styles.statusDetailRow}>
               <Text style={styles.statusText}>
-                Status:{" "}
-                {item.qr_code && item.status === "completed"
-                  ? "Valid"
-                  : "Expired"}
+                Status: {statusLabelMap[item.status]}
               </Text>
             </View>
           )}
@@ -153,7 +130,7 @@ export default function Index() {
           {item.created_at && (
             <View style={styles.processedRow}>
               <Text style={styles.processedText}>
-                Processed:{" "}
+                Created At:{" "}
                 {DateTime.fromJSDate(new Date(item.created_at)).toLocaleString(
                   DateTime.DATETIME_SHORT
                 )}

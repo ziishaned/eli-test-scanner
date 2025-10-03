@@ -57,6 +57,7 @@ export const findAllTestStrips = async (
       id,
       qr_code,
       status,
+      error_message,
       thumbnail_path,
       created_at
     FROM test_strip_submissions
@@ -70,6 +71,7 @@ export const findAllTestStrips = async (
     id: row.id,
     qr_code: row.qr_code,
     status: row.status,
+    error_message: row.error_message,
     thumbnail_url: row.thumbnail_path
       ? `/uploads/${row.thumbnail_path}`
       : undefined,
