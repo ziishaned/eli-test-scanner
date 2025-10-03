@@ -81,7 +81,7 @@ export class TestStripModel {
       status: row.status,
       quality: row.quality,
       thumbnail_url: row.thumbnail_path
-        ? `/uploads/thumbnails/${row.thumbnail_path}`
+        ? `/uploads/${row.thumbnail_path}`
         : undefined,
       created_at: row.created_at,
     }));

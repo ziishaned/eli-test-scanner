@@ -67,8 +67,8 @@ export class ImageProcessor {
     const thumbnailFilename = `thumb_${Date.now()}${ext}`;
     const thumbnailPath = path.join(
       process.cwd(),
+      "..",
       "uploads",
-      "thumbnails",
       thumbnailFilename
     );
 

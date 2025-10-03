@@ -1,5 +1,2 @@
 .env
 node_modules
-
-uploads/images/*
-uploads/thumbnails/*

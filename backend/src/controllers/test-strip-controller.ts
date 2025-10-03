@@ -129,9 +129,9 @@ export class TestStripController {
       // Enhanced response with additional metadata
       const response = {
         ...submission,
-        originalImageUrl: `/uploads/images/${submission.original_image_path}`,
+        originalImageUrl: `/uploads/${submission.original_image_path}`,
         thumbnailUrl: submission.thumbnail_path
-          ? `/uploads/thumbnails/${submission.thumbnail_path}`
+          ? `/uploads/${submission.thumbnail_path}`
           : null,
         quality:
           submission.status === "completed"
