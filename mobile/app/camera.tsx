@@ -23,6 +23,7 @@ export default function CameraScreen() {
     "back"
   );
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const cameraRef = useRef<Camera>(null);
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice(cameraPosition);
@@ -79,11 +80,50 @@ export default function CameraScreen() {
     }
   };
 
+  const uploadImage = async (imageUri: string) => {
+    const formData = new FormData();
+
+    // Create file object for the image
+    const imageFile = {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: "test-strip.jpg",
+    } as any;
+
+    formData.append("image", imageFile);
+
+    const response = await fetch(
+      "https://49c0ac3e2d43.ngrok-free.app/api/test-strips/upload",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Upload failed with status: ${response.status}`);
+    }
+
+    return await response.json();
+  };
+
   const handleSubmit = async () => {
+    if (!capturedImage) {
+      Alert.alert("Error", "No image to submit.");
+      return;
+    }
+
+    setIsUploading(true);
+
     try {
+      await uploadImage(capturedImage);
+
       Alert.alert(
-        "Submitting...",
-        "Your test strip photo is being processed.",
+        "Success!",
+        "Your test strip photo has been uploaded successfully.",
         [
           {
             text: "OK",
@@ -94,17 +134,17 @@ export default function CameraScreen() {
         ]
       );
     } catch (error) {
-      console.error("Error submitting image:", error);
-      Alert.alert("Error", "Failed to submit photo. Please try again.");
+      Alert.alert(
+        "Upload Failed",
+        "Failed to upload photo. Please check your internet connection and try again."
+      );
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleRetake = () => {
     setCapturedImage(null);
-  };
-
-  const handleClose = () => {
-    router.replace("./");
   };
 
   return (
@@ -128,10 +168,16 @@ export default function CameraScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.primaryButton}
+              style={[
+                styles.primaryButton,
+                isUploading && styles.primaryButtonDisabled,
+              ]}
               onPress={handleSubmit}
+              disabled={isUploading}
             >
-              <Text style={styles.primaryButtonText}>Submit</Text>
+              <Text style={styles.primaryButtonText}>
+                {isUploading ? "Uploading..." : "Submit"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -343,6 +389,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 16,
     borderRadius: 12,
+  },
+  primaryButtonDisabled: {
+    backgroundColor: "#9E9E9E",
   },
   primaryButtonText: {
     color: "white",
