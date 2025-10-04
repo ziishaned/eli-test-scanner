@@ -8,7 +8,8 @@ import {
 export async function createTestStrip(
   data: Omit<TestStripSubmission, "id" | "created_at">
 ): Promise<TestStripSubmission> {
-  const result = await pool.query({
+  const client = await pool.connect();
+  const result = await client.query({
     name: "create-test-strip",
     text: `
       INSERT INTO
@@ -43,13 +44,15 @@ export async function createTestStrip(
       data.error_message,
     ],
   });
+  client.release();
   return result.rows[0];
 }
 
 export async function findTestStripById(
   id: string
 ): Promise<TestStripSubmission | null> {
-  const result = await pool.query({
+  const client = await pool.connect();
+  const result = await client.query({
     values: [id],
     name: "fetch-test-strip-by-id",
     text: `
@@ -61,19 +64,21 @@ export async function findTestStripById(
         id = $1
     `,
   });
+  client.release();
   return result.rows[0] || null;
 }
 
 export async function findAllTestStrips(
   pagination: PaginationParams
 ): Promise<PaginatedResponse<TestStripSubmission>> {
-  const countResult = await pool.query({
+  const client = await pool.connect();
+  const countResult = await client.query({
     name: "count-test-strips",
     text: "SELECT COUNT(*) FROM test_strip_submissions",
   });
   const total = parseInt(countResult.rows[0].count);
 
-  const result = await pool.query({
+  const result = await client.query({
     name: "fetch-test-strips",
     values: [pagination.limit, pagination.offset],
     text: `
@@ -94,6 +99,7 @@ export async function findAllTestStrips(
         $2
     `,
   });
+  client.release();
 
   return {
     data: result.rows,
