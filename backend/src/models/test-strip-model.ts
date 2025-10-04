@@ -1,16 +1,16 @@
-import { pool } from "../database";
+import { pool } from '../database';
 import {
   TestStripSubmission,
   PaginationParams,
   PaginatedResponse,
-} from "../types";
+} from '../types';
 
 export async function createTestStrip(
-  data: Omit<TestStripSubmission, "id" | "created_at">
+  data: Omit<TestStripSubmission, 'id' | 'created_at'>,
 ): Promise<TestStripSubmission> {
   const client = await pool.connect();
   const result = await client.query({
-    name: "create-test-strip",
+    name: 'create-test-strip',
     text: `
       INSERT INTO
         test_strip_submissions (
@@ -49,12 +49,12 @@ export async function createTestStrip(
 }
 
 export async function findTestStripById(
-  id: string
+  id: string,
 ): Promise<TestStripSubmission | null> {
   const client = await pool.connect();
   const result = await client.query({
     values: [id],
-    name: "fetch-test-strip-by-id",
+    name: 'fetch-test-strip-by-id',
     text: `
       SELECT
         *
@@ -69,17 +69,17 @@ export async function findTestStripById(
 }
 
 export async function findAllTestStrips(
-  pagination: PaginationParams
+  pagination: PaginationParams,
 ): Promise<PaginatedResponse<TestStripSubmission>> {
   const client = await pool.connect();
   const countResult = await client.query({
-    name: "count-test-strips",
-    text: "SELECT COUNT(*) FROM test_strip_submissions",
+    name: 'count-test-strips',
+    text: 'SELECT COUNT(*) FROM test_strip_submissions',
   });
   const total = parseInt(countResult.rows[0].count);
 
   const result = await client.query({
-    name: "fetch-test-strips",
+    name: 'fetch-test-strips',
     values: [pagination.limit, pagination.offset],
     text: `
       SELECT
