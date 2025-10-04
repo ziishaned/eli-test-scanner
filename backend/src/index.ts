@@ -8,7 +8,6 @@ import testStripRoutes from "./routes/test-strip-routes";
 const app = express();
 
 app.use(pinoHTTP({ logger }));
-app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(path.resolve("../uploads")));
 
