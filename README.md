@@ -29,9 +29,9 @@ Before running the application, ensure you have the following installed:
 
 ## Project structure
 
-| Backend                                     | Mobile                                      |
-| ------------------------------------------- | ------------------------------------------- |
-| <img src="https://imgur.com/wzLYmG3.png" /> | <img src="https://imgur.com/dAbPEbO.png" /> |
+| Backend                                                              | Mobile                                                               |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| <img src="https://imgur.com/wzLYmG3.png" width="392" height="757" /> | <img src="https://imgur.com/dAbPEbO.png" width="392" height="757" /> |
 
 ## Quick Start
 
