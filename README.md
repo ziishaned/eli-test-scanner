@@ -4,7 +4,13 @@ A monorepo containing backend API and mobile application for scanning and proces
 
 ## Demo
 
+### Mobile
+
 <img src="https://media.giphy.com/media/Z1yHiMUUn06SB2joeb/giphy.gif" />
+
+### Backend
+
+<img src="https://imgur.com/PsZVx3J.png">
 
 ## Screenshots
 
