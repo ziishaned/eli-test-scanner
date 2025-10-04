@@ -1,6 +1,6 @@
 import { Pool } from "pg";
-import { logger } from "./utils/logger";
-import { appConfig } from "./config";
+import { appConfig } from "../config";
+import { logger } from "../utils/logger";
 
 export const pool = new Pool({
   user: appConfig.postgres.user,

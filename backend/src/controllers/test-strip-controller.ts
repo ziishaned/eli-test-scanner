@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError } from "../errors/not-found-error";
 import { BadRequestError } from "../errors/bad-request-error";
-import { processImage, validateImageFile } from "../utils/image-processor";
+import { processImage } from "../utils/image-processor";
 import {
   createTestStrip,
   findAllTestStrips,
@@ -14,9 +14,6 @@ export async function uploadTestStrip(
   res: Response
 ): Promise<void> {
   if (!req.file) throw new BadRequestError("No image file provided");
-
-  const validation = validateImageFile(req.file);
-  if (!validation.isValid) throw new BadRequestError(validation.error);
 
   const processingResult = await processImage(req.file.path);
 

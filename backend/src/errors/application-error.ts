@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 export class ApplicationError extends Error {
   status: number;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status?: number) {
     super();
 
     Error.captureStackTrace(this, this.constructor);

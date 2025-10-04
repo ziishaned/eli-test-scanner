@@ -2,9 +2,11 @@ import jsQR from "jsqr";
 import path from "path";
 import sharp from "sharp";
 import sizeOf from "image-size";
+import { logger } from "./logger";
 import { promises as fs } from "fs";
 import { uploadsDirectoryPath } from "../config";
 import { ImageProcessingResult, QRCodeData } from "../types";
+import { ApplicationError } from "../errors/application-error";
 
 export async function processImage(
   imagePath: string
@@ -18,24 +20,18 @@ export async function processImage(
       throw new Error("Invalid image dimensions");
     }
 
-    const imageDimensions = `${dimensions.width}x${dimensions.height}`;
-    const imageSize = stats.size;
-
+    const qrCode = await processTestStrip(imageBuffer);
     const thumbnailPath = await generateThumbnail(imagePath);
 
-    const qrCode = await processTestStrip(imageBuffer);
-
     return {
-      thumbnailPath,
-      imageDimensions,
-      imageSize,
       qrCode,
+      thumbnailPath,
+      imageSize: stats.size,
+      imageDimensions: `${dimensions.width}x${dimensions.height}`,
     };
   } catch (error) {
-    return {
-      imageDimensions: "unknown",
-      imageSize: 0,
-    };
+    logger.error(`Error processing image: ${error}`);
+    throw new ApplicationError("Error processing image");
   }
 }
 
@@ -109,33 +105,10 @@ async function processTestStrip(imageBuffer: Buffer): Promise<QRCodeData> {
       error: "Unknown QR code error",
     };
   } catch (error) {
+    logger.error(`Error processing QR code: ${error}`);
     return {
       status: "invalid",
       error: "Error processing QR code",
     };
   }
-}
-
-export function validateImageFile(file: Express.Multer.File): {
-  isValid: boolean;
-  error?: string;
-} {
-  const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
-  const maxSize = 10 * 1024 * 1024; // 10MB
-
-  if (!allowedMimes.includes(file.mimetype)) {
-    return {
-      isValid: false,
-      error: "Invalid file type. Only JPG and PNG files are allowed.",
-    };
-  }
-
-  if (file.size > maxSize) {
-    return {
-      isValid: false,
-      error: "File size too large. Maximum size is 10MB.",
-    };
-  }
-
-  return { isValid: true };
 }

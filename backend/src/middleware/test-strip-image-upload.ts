@@ -29,7 +29,7 @@ function fileFilter(
   }
 }
 
-export const upload = multer({
+export const testStripImageUpload = multer({
   storage,
   fileFilter,
   limits: {
