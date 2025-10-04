@@ -4,7 +4,6 @@ import express from "express";
 import request from "supertest";
 import { TestStripSubmission } from "../src/types";
 import testStripRoutes from "../src/routes/test-strip-routes";
-import { errorHandler, notFoundHandler } from "../src/middleware/error-handler";
 
 jest.mock("../src/database", () => ({
   pool: {
@@ -35,9 +34,6 @@ function createTestApp() {
   );
 
   app.use("/api/test-strips", testStripRoutes);
-
-  app.use(notFoundHandler);
-  app.use(errorHandler);
 
   return app;
 }
