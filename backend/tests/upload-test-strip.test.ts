@@ -22,7 +22,7 @@ jest.mock("../src/utils/image-processor", () => ({
   validateImageFile: jest.fn(),
 }));
 
-const createTestApp = () => {
+function createTestApp() {
   const app = express();
 
   app.use(cors());
@@ -40,7 +40,7 @@ const createTestApp = () => {
   app.use(errorHandler);
 
   return app;
-};
+}
 
 describe("POST /api/test-strips/upload - Upload Test Strip API Flow", () => {
   let app: express.Application;

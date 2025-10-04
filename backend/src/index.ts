@@ -1,36 +1,28 @@
 import "dotenv/config";
-import morgan from "morgan";
-import express, { Request, Response } from "express";
-import cors from "cors";
 import path from "path";
-import { testConnection } from "./database";
+import pinoHTTP from "pino-http";
+import express, { Request, Response } from "express";
+import { logger } from "./utils/logger";
 import testStripRoutes from "./routes/test-strip-routes";
-import { errorHandler, notFoundHandler } from "./middleware/error-handler";
 
 const app = express();
 
-testConnection();
-
-app.use(cors());
-app.use(morgan("tiny"));
-app.use(express.json());
+app.use(pinoHTTP({ logger }));
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static(path.join(process.cwd(), "..", "uploads")));
+app.use("/uploads", express.static(path.resolve("../uploads")));
 
 app.use("/api/test-strips", testStripRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
+  res.json({
+    status: "OK",
+    timestamp: Date.now(),
+    uptime: process.uptime(),
+  });
 });
 
-app.use(notFoundHandler);
-
-app.use(errorHandler);
-
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`Server is running on port ${PORT}`);
 });

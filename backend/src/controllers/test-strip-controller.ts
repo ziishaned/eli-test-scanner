@@ -6,10 +6,10 @@ import {
   findTestStripById,
 } from "../models/test-strip-model";
 
-export const uploadTestStrip = async (
+export async function uploadTestStrip(
   req: Request,
   res: Response
-): Promise<void> => {
+): Promise<void> {
   try {
     if (!req.file) {
       res.status(400).json({ error: "No image file provided" });
@@ -45,12 +45,12 @@ export const uploadTestStrip = async (
           : undefined,
     });
   }
-};
+}
 
-export const getTestStrips = async (
+export async function getTestStrips(
   req: Request,
   res: Response
-): Promise<void> => {
+): Promise<void> {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
@@ -69,12 +69,12 @@ export const getTestStrips = async (
           : undefined,
     });
   }
-};
+}
 
-export const getTestStripById = async (
+export async function getTestStripById(
   req: Request,
   res: Response
-): Promise<void> => {
+): Promise<void> {
   try {
     const { id } = req.params;
 
@@ -101,4 +101,4 @@ export const getTestStripById = async (
           : undefined,
     });
   }
-};
+}

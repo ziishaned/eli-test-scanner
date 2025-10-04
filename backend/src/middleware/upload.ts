@@ -13,11 +13,11 @@ const storage = multer.diskStorage({
   },
 });
 
-const fileFilter = (
+function fileFilter(
   req: Request,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
-) => {
+) {
   const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
 
   if (allowedMimes.includes(file.mimetype)) {
@@ -29,7 +29,7 @@ const fileFilter = (
     error.name = "MulterError";
     cb(error);
   }
-};
+}
 
 export const upload = multer({
   storage,
@@ -42,12 +42,12 @@ export const upload = multer({
 
 export const uploadSingleImage = upload.single("image");
 
-export const handleMulterError = (
+export function handleMulterError(
   err: any,
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   if (
     err?.name === "MulterError" ||
     err?.message?.includes("Invalid file type")
@@ -55,4 +55,4 @@ export const handleMulterError = (
     return res.status(400).json({ error: err?.message });
   }
   next(err);
-};
+}

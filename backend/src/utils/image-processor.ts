@@ -7,9 +7,9 @@ import { ImageProcessingResult, QRCodeData } from "../types";
 
 const thumbnailSize = 200;
 
-export const processImage = async (
+export async function processImage(
   imagePath: string
-): Promise<ImageProcessingResult> => {
+): Promise<ImageProcessingResult> {
   try {
     const imageBuffer = await fs.readFile(imagePath);
     const dimensions = sizeOf(imageBuffer);
@@ -38,9 +38,9 @@ export const processImage = async (
       imageSize: 0,
     };
   }
-};
+}
 
-const generateThumbnail = async (imagePath: string): Promise<string> => {
+async function generateThumbnail(imagePath: string): Promise<string> {
   const ext = path.extname(imagePath);
   const thumbnailFilename = `thumb_${Date.now()}${ext}`;
   const thumbnailPath = path.join(
@@ -60,9 +60,9 @@ const generateThumbnail = async (imagePath: string): Promise<string> => {
     .toFile(thumbnailPath);
 
   return thumbnailFilename;
-};
+}
 
-const processTestStrip = async (imageBuffer: Buffer): Promise<QRCodeData> => {
+async function processTestStrip(imageBuffer: Buffer): Promise<QRCodeData> {
   try {
     const sharpImg = sharp(imageBuffer).resize({
       width: 800,
@@ -110,14 +110,12 @@ const processTestStrip = async (imageBuffer: Buffer): Promise<QRCodeData> => {
       error: "Error processing QR code",
     };
   }
-};
+}
 
-export const validateImageFile = (
-  file: Express.Multer.File
-): {
+export function validateImageFile(file: Express.Multer.File): {
   isValid: boolean;
   error?: string;
-} => {
+} {
   const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
   const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -136,4 +134,4 @@ export const validateImageFile = (
   }
 
   return { isValid: true };
-};
+}

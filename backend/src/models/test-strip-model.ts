@@ -5,9 +5,9 @@ import {
   PaginatedResponse,
 } from "../types";
 
-export const createTestStrip = async (
+export async function createTestStrip(
   data: Omit<TestStripSubmission, "id" | "created_at">
-): Promise<TestStripSubmission> => {
+): Promise<TestStripSubmission> {
   const query = `
     INSERT INTO test_strip_submissions
     (qr_code, original_image_path, thumbnail_path, image_size, image_dimensions, status, error_message)
@@ -27,19 +27,19 @@ export const createTestStrip = async (
 
   const result = await pool.query(query, values);
   return result.rows[0];
-};
+}
 
-export const findTestStripById = async (
+export async function findTestStripById(
   id: string
-): Promise<TestStripSubmission | null> => {
+): Promise<TestStripSubmission | null> {
   const query = "SELECT * FROM test_strip_submissions WHERE id = $1";
   const result = await pool.query(query, [id]);
   return result.rows[0] || null;
-};
+}
 
-export const findAllTestStrips = async (
+export async function findAllTestStrips(
   pagination: PaginationParams
-): Promise<PaginatedResponse<TestStripSubmission>> => {
+): Promise<PaginatedResponse<TestStripSubmission>> {
   const countQuery = "SELECT COUNT(*) FROM test_strip_submissions";
   const countResult = await pool.query(countQuery);
   const total = parseInt(countResult.rows[0].count);
@@ -68,4 +68,4 @@ export const findAllTestStrips = async (
       total_pages: Math.ceil(total / pagination.limit),
     },
   };
-};
+}

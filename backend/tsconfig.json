@@ -9,10 +9,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["*"]
-    },
     "types": ["jest", "node"]
   },
   "include": ["src"],
