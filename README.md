@@ -8,13 +8,13 @@ A monorepo containing backend API and mobile application for scanning and proces
 
 ## Screenshots
 
-| Empty                                          | History                                        | Camera                                         |
-| ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
-| <img src="https://i.imgur.com/bsVuc6N.jpeg" /> | <img src="https://i.imgur.com/y1D0yoj.jpeg" /> | <img src="https://i.imgur.com/41SuSZQ.jpeg" /> |
+| Empty                                                                   | History                                                                 | Camera                                                                  |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| <img src="https://i.imgur.com/bsVuc6N.jpeg" width="260" height="540" /> | <img src="https://i.imgur.com/y1D0yoj.jpeg" width="260" height="540" /> | <img src="https://i.imgur.com/41SuSZQ.jpeg" width="260" height="540" /> |
 
-| Preview                                        | Details                                        | No internet connection                         |
-| ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
-| <img src="https://i.imgur.com/SFaTHKd.jpeg" /> | <img src="https://i.imgur.com/R4srIpy.jpeg" /> | <img src="https://i.imgur.com/k3VHaPG.jpeg" /> |
+| Preview                                                                 | Details                                                                 | No internet connection                                                  |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| <img src="https://i.imgur.com/SFaTHKd.jpeg" width="260" height="540" /> | <img src="https://i.imgur.com/R4srIpy.jpeg" width="260" height="540" /> | <img src="https://i.imgur.com/k3VHaPG.jpeg" width="260" height="540" /> |
 
 ## Prerequisites
 
