@@ -3,7 +3,7 @@ import path from "path";
 import sharp from "sharp";
 import sizeOf from "image-size";
 import { promises as fs } from "fs";
-import { appConfig, uploadsDirectoryPath } from "../config";
+import { uploadsDirectoryPath } from "../config";
 import { ImageProcessingResult, QRCodeData } from "../types";
 
 export async function processImage(
