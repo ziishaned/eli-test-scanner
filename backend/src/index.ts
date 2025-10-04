@@ -1,6 +1,6 @@
 import pinoHTTP from "pino-http";
 import express, { NextFunction, Request, Response } from "express";
-import { appConfig, uploadsDirectoryPath } from "./config";
+import { appConfig } from "./config";
 import { logger } from "./utils/logger";
 import testStripRoutes from "./routes/test-strip-routes";
 import { StatusCodes } from "http-status-codes";
@@ -11,7 +11,7 @@ const app = express();
 
 app.use(pinoHTTP({ logger }));
 
-app.use("/uploads", express.static(uploadsDirectoryPath));
+app.use("/uploads", express.static(appConfig.uploadsDirPath));
 
 app.use("/api/test-strips", testStripRoutes);
 

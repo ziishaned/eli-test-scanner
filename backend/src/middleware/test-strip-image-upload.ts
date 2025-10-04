@@ -2,12 +2,12 @@ import path from "path";
 import multer from "multer";
 import { Request } from "express";
 import { randomUUID } from "crypto";
-import { uploadsDirectoryPath } from "../config";
+import { appConfig } from "../config";
 import { BadRequestError } from "../errors/bad-request-error";
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
-    cb(null, uploadsDirectoryPath);
+    cb(null, appConfig.uploadsDirPath);
   },
   filename: (req: Request, file: Express.Multer.File, cb) => {
     const uniqueName = `${randomUUID()}${path.extname(file.originalname)}`;

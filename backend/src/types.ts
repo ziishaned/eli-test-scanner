@@ -38,3 +38,16 @@ export interface PaginatedResponse<T> {
     total_pages: number;
   };
 }
+
+export type AppConfig = {
+  port: number;
+  uploadsDirPath: string;
+  isDevelopment: boolean;
+  postgres: {
+    user: string;
+    password: string;
+    database: string;
+    host: string;
+    port: number;
+  };
+};

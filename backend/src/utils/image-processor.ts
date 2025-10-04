@@ -4,7 +4,7 @@ import sharp from "sharp";
 import sizeOf from "image-size";
 import { logger } from "./logger";
 import { promises as fs } from "fs";
-import { uploadsDirectoryPath } from "../config";
+import { appConfig } from "../config";
 import { ImageProcessingResult, QRCodeData } from "../types";
 import { ApplicationError } from "../errors/application-error";
 
@@ -38,7 +38,7 @@ export async function processImage(
 async function generateThumbnail(imagePath: string): Promise<string> {
   const ext = path.extname(imagePath);
   const thumbnailFilename = `thumb_${Date.now()}${ext}`;
-  const thumbnailPath = path.join(uploadsDirectoryPath, thumbnailFilename);
+  const thumbnailPath = path.join(appConfig.uploadsDirPath, thumbnailFilename);
 
   await sharp(imagePath)
     .rotate()
