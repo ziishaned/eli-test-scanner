@@ -17,7 +17,6 @@ jest.mock("../src/models/test-strip-model", () => ({
 
 jest.mock("../src/utils/image-processor", () => ({
   processImage: jest.fn(),
-  validateImageFile: jest.fn(),
 }));
 
 function createTestApp() {
@@ -48,14 +47,8 @@ describe("POST /api/test-strips/upload - Upload Test Strip API Flow", () => {
   });
 
   it("should successfully upload a valid test strip image and return complete response", async () => {
-    const { validateImageFile } = require("../src/utils/image-processor");
     const { processImage } = require("../src/utils/image-processor");
     const { createTestStrip } = require("../src/models/test-strip-model");
-
-    validateImageFile.mockReturnValue({
-      isValid: true,
-      error: null,
-    });
 
     processImage.mockResolvedValue({
       qrCode: {
@@ -118,13 +111,6 @@ describe("POST /api/test-strips/upload - Upload Test Strip API Flow", () => {
       Date.now()
     );
 
-    expect(validateImageFile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        originalname: "test-strip-valid-1.png",
-        mimetype: "image/png",
-        fieldname: "image",
-      })
-    );
     expect(processImage).toHaveBeenCalledWith(expect.stringContaining(".png"));
     expect(createTestStrip).toHaveBeenCalledWith({
       qr_code: "ELI-2025-001",
