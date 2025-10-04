@@ -1,5 +1,4 @@
 import path from "path";
-import cors from "cors";
 import express from "express";
 import request from "supertest";
 import { TestStripSubmission } from "../src/types";
@@ -24,7 +23,6 @@ jest.mock("../src/utils/image-processor", () => ({
 function createTestApp() {
   const app = express();
 
-  app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
