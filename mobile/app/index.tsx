@@ -171,6 +171,7 @@ export default function Index() {
     <>
       <StatusBar style="dark" />
       <FlatList
+        testID="submissions-list"
         data={submissions}
         renderItem={renderSubmissionItem}
         keyExtractor={(item) => item.id}
@@ -178,6 +179,8 @@ export default function Index() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={renderFooter}
+        onEndReached={loadMoreSubmissions}
+        onEndReachedThreshold={0.1}
         contentContainerStyle={[
           styles.listContainer,
           submissions.length === 0 && styles.emptyListContainer,
@@ -194,6 +197,7 @@ export default function Index() {
       />
 
       <TouchableOpacity
+        testID="camera-fab"
         style={styles.fab}
         activeOpacity={0.8}
         onPress={() => router.push("/camera" as any)}

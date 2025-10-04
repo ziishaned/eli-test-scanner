@@ -121,12 +121,16 @@ export default function CameraScreen() {
   };
 
   return (
-    <View style={[styles.container, capturedImage && styles.previewContainer]}>
+    <View
+      testID="camera-container"
+      style={[styles.container, capturedImage && styles.previewContainer]}
+    >
       <StatusBar style="dark" />
       {capturedImage ? (
         <View style={{ flex: 1 }}>
           <View style={styles.imageContainer}>
             <Image
+              testID="photo-preview"
               source={{ uri: capturedImage }}
               style={styles.previewImage}
               contentFit="contain"
@@ -142,6 +146,7 @@ export default function CameraScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              testID="submit-button"
               style={[
                 styles.primaryButton,
                 isUploading && styles.primaryButtonDisabled,
@@ -159,6 +164,7 @@ export default function CameraScreen() {
         <View style={styles.cameraContainer}>
           <View style={styles.cameraViewContainer}>
             <Camera
+              testID="camera-component"
               ref={cameraRef}
               style={styles.camera}
               device={device}
@@ -167,6 +173,7 @@ export default function CameraScreen() {
             >
               <View style={styles.topControls}>
                 <TouchableOpacity
+                  testID="back-button"
                   style={styles.topButton}
                   onPress={() => router.back()}
                 >
@@ -174,6 +181,7 @@ export default function CameraScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                  testID="flip-camera-button"
                   style={styles.topButton}
                   onPress={toggleCameraFacing}
                 >
@@ -193,6 +201,7 @@ export default function CameraScreen() {
           <View style={styles.bottomControlsArea}>
             <View style={styles.bottomControls}>
               <TouchableOpacity
+                testID="capture-button"
                 style={styles.captureButton}
                 onPress={takePicture}
               >
