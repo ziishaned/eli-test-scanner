@@ -6,8 +6,6 @@ import { promises as fs } from "fs";
 import { appConfig, uploadsDirectoryPath } from "../config";
 import { ImageProcessingResult, QRCodeData } from "../types";
 
-const thumbnailSize = 200;
-
 export async function processImage(
   imagePath: string
 ): Promise<ImageProcessingResult> {
@@ -48,10 +46,7 @@ async function generateThumbnail(imagePath: string): Promise<string> {
 
   await sharp(imagePath)
     .rotate()
-    .resize(thumbnailSize, thumbnailSize, {
-      fit: "inside",
-      withoutEnlargement: true,
-    })
+    .resize(200, 200, { fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 80 })
     .toFile(thumbnailPath);
 
