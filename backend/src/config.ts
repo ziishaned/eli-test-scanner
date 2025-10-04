@@ -1,4 +1,7 @@
 import "dotenv/config";
+import path from "path";
+
+export const uploadsDirectoryPath = path.resolve("../uploads");
 
 type AppConfig = {
   isTesting: boolean;

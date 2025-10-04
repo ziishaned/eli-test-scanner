@@ -3,6 +3,7 @@ import path from "path";
 import sharp from "sharp";
 import sizeOf from "image-size";
 import { promises as fs } from "fs";
+import { appConfig, uploadsDirectoryPath } from "../config";
 import { ImageProcessingResult, QRCodeData } from "../types";
 
 const thumbnailSize = 200;
@@ -43,12 +44,7 @@ export async function processImage(
 async function generateThumbnail(imagePath: string): Promise<string> {
   const ext = path.extname(imagePath);
   const thumbnailFilename = `thumb_${Date.now()}${ext}`;
-  const thumbnailPath = path.join(
-    process.cwd(),
-    "..",
-    "uploads",
-    thumbnailFilename
-  );
+  const thumbnailPath = path.join(uploadsDirectoryPath, thumbnailFilename);
 
   await sharp(imagePath)
     .rotate()
@@ -86,24 +82,37 @@ async function processTestStrip(imageBuffer: Buffer): Promise<QRCodeData> {
     }
 
     const qrCode = code.data;
-    if (qrCode === "ELI-2024-999") {
+
+    const qrCodePattern = /^ELI-\d{4}-\d{3}$/;
+    if (!qrCodePattern.test(qrCode)) {
+      return {
+        status: "invalid",
+        error: "Invalid QR code format",
+      };
+    }
+
+    const testStringYear = parseInt(qrCode.split("-")[1]);
+    const currentYear = new Date().getFullYear();
+
+    if (testStringYear >= currentYear) {
+      return {
+        qrCode,
+        status: "valid",
+      };
+    }
+
+    if (testStringYear < currentYear) {
       return {
         qrCode,
         status: "expired",
         error: "Test strip expired",
       };
-    } else if (qrCode.startsWith("ELI-2025")) {
-      return {
-        qrCode,
-        status: "valid",
-      };
-    } else {
-      return {
-        qrCode,
-        status: "invalid",
-        error: "Unknown QR code format",
-      };
     }
+
+    return {
+      status: "invalid",
+      error: "Unknown QR code error",
+    };
   } catch (error) {
     return {
       status: "invalid",
