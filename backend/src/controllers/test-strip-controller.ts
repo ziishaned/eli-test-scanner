@@ -1,26 +1,22 @@
 import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import { NotFoundError } from "../errors/not-found-error";
+import { BadRequestError } from "../errors/bad-request-error";
 import { processImage, validateImageFile } from "../utils/image-processor";
 import {
   createTestStrip,
   findAllTestStrips,
   findTestStripById,
 } from "../models/test-strip-model";
-import { NotFoundError } from "../errors/not-found-error";
 
 export async function uploadTestStrip(
   req: Request,
   res: Response
 ): Promise<void> {
-  if (!req.file) {
-    res.status(400).json({ error: "No image file provided" });
-    return;
-  }
+  if (!req.file) throw new BadRequestError("No image file provided");
 
   const validation = validateImageFile(req.file);
-  if (!validation.isValid) {
-    res.status(400).json({ error: validation.error });
-    return;
-  }
+  if (!validation.isValid) throw new BadRequestError(validation.error);
 
   const processingResult = await processImage(req.file.path);
 
@@ -34,15 +30,15 @@ export async function uploadTestStrip(
     error_message: processingResult.qrCode?.error,
   });
 
-  res.status(201).json(submission);
+  res.status(StatusCodes.CREATED).json(submission);
 }
 
 export async function getTestStrips(
   req: Request,
   res: Response
 ): Promise<void> {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 20;
+  const page = parseInt(req.query.page as string) ?? 1;
+  const limit = parseInt(req.query.limit as string) ?? 20;
   const offset = (page - 1) * limit;
 
   const result = await findAllTestStrips({ page, limit, offset });
@@ -55,17 +51,10 @@ export async function getTestStripById(
   res: Response
 ): Promise<void> {
   const { id } = req.params;
-
-  if (!id) {
-    res.status(400).json({ error: "id is required" });
-    return;
-  }
+  if (!id) throw new BadRequestError("id is required");
 
   const submission = await findTestStripById(id);
-
-  if (!submission) {
-    throw new NotFoundError("Test strip not found");
-  }
+  if (!submission) throw new NotFoundError("Test strip not found");
 
   res.json(submission);
 }

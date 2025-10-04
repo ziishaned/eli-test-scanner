@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { ApplicationError } from "./application-error";
 
-export class NotFoundError extends ApplicationError {
+export class BadRequestError extends ApplicationError {
   constructor(message?: string) {
-    super(message ?? "Not found error", StatusCodes.NOT_FOUND);
+    super(message ?? "Bad request error", StatusCodes.BAD_REQUEST);
   }
 }
