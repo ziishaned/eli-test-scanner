@@ -1,5 +1,6 @@
+import { Express } from "express";
 import path from "path";
-import multer from "multer";
+import multer, { FileFilterCallback } from "multer";
 import { Request } from "express";
 import { randomUUID } from "crypto";
 import { appConfig } from "../config";
@@ -9,7 +10,7 @@ const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
     cb(null, appConfig.uploadsDirPath);
   },
-  filename: (req: Request, file: Express.Multer.File, cb) => {
+  filename: (req: Request, file, cb) => {
     const uniqueName = `${randomUUID()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
   },
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
 function fileFilter(
   req: Request,
   file: Express.Multer.File,
-  cb: multer.FileFilterCallback
+  cb: FileFilterCallback
 ) {
   const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
 

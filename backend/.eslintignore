@@ -1,0 +1,9 @@
+dist/**
+build/**
+node_modules/**
+coverage/**
+*.log
+.env*
+babel.config.js
+jest.config.js
+

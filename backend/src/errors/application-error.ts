@@ -1,4 +1,4 @@
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from 'http-status-codes';
 
 export class ApplicationError extends Error {
   status: number;
@@ -9,7 +9,7 @@ export class ApplicationError extends Error {
     Error.captureStackTrace(this, this.constructor);
 
     this.name = this.constructor.name;
-    this.message = message ?? "Internal server error";
+    this.message = message ?? 'Internal server error';
     this.status = status || StatusCodes.INTERNAL_SERVER_ERROR;
   }
 }
