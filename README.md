@@ -29,24 +29,9 @@ Before running the application, ensure you have the following installed:
 
 ## Project structure
 
-```
-eli-test-scanner/
-├── backend/                 # API server
-│   ├── src/
-│   │   ├── controllers/     # Request handlers
-│   │   ├── middleware/      # Express middleware
-│   │   ├── models/          # Data models
-│   │   ├── routes/          # API routes
-│   │   └── utils/           # Utility functions
-│   ├── tests/               # Backend tests
-│   └── schema.sql           # Database schema
-├── mobile/                  # React Native/Expo app
-│   ├── app/                 # App screens
-│   ├── src/                 # Source code
-│   └── assets/              # Static assets
-├── uploads/                 # Uploaded images storage
-└── docker-compose.yml       # Docker configuration
-```
+| Backend                                     | Mobile                                      |
+| ------------------------------------------- | ------------------------------------------- |
+| <img src="https://imgur.com/wzLYmG3.png" /> | <img src="https://imgur.com/dAbPEbO.png" /> |
 
 ## Quick Start
 
