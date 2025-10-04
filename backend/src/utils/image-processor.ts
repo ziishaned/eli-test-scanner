@@ -1,15 +1,15 @@
-import jsQR from "jsqr";
-import path from "path";
-import sharp from "sharp";
-import sizeOf from "image-size";
-import { logger } from "./logger";
-import { promises as fs } from "fs";
-import { appConfig } from "../config";
-import { ImageProcessingResult, QRCodeData } from "../types";
-import { ApplicationError } from "../errors/application-error";
+import jsQR from 'jsqr';
+import path from 'path';
+import sharp from 'sharp';
+import sizeOf from 'image-size';
+import { logger } from './logger';
+import { promises as fs } from 'fs';
+import { appConfig } from '../config';
+import { ImageProcessingResult, QRCodeData } from '../types';
+import { ApplicationError } from '../errors/application-error';
 
 export async function processImage(
-  imagePath: string
+  imagePath: string,
 ): Promise<ImageProcessingResult> {
   try {
     const imageBuffer = await fs.readFile(imagePath);
@@ -17,7 +17,7 @@ export async function processImage(
     const stats = await fs.stat(imagePath);
 
     if (!dimensions.width || !dimensions.height) {
-      throw new Error("Invalid image dimensions");
+      throw new Error('Invalid image dimensions');
     }
 
     const qrCode = await processTestStrip(imageBuffer);
@@ -31,7 +31,7 @@ export async function processImage(
     };
   } catch (error) {
     logger.error(`Error processing image: ${error}`);
-    throw new ApplicationError("Error processing image");
+    throw new ApplicationError('Error processing image');
   }
 }
 
@@ -42,7 +42,7 @@ async function generateThumbnail(imagePath: string): Promise<string> {
 
   await sharp(imagePath)
     .rotate()
-    .resize(200, 200, { fit: "inside", withoutEnlargement: true })
+    .resize(200, 200, { fit: 'inside', withoutEnlargement: true })
     .jpeg({ quality: 80 })
     .toFile(thumbnailPath);
 
@@ -67,8 +67,8 @@ async function processTestStrip(imageBuffer: Buffer): Promise<QRCodeData> {
 
     if (!code) {
       return {
-        status: "noQRCode",
-        error: "QR code not found",
+        status: 'noQRCode',
+        error: 'QR code not found',
       };
     }
 
@@ -77,38 +77,38 @@ async function processTestStrip(imageBuffer: Buffer): Promise<QRCodeData> {
     const qrCodePattern = /^ELI-\d{4}-\d{3}$/;
     if (!qrCodePattern.test(qrCode)) {
       return {
-        status: "invalid",
-        error: "Invalid QR code format",
+        status: 'invalid',
+        error: 'Invalid QR code format',
       };
     }
 
-    const testStringYear = parseInt(qrCode.split("-")[1]);
+    const testStringYear = parseInt(qrCode.split('-')[1]);
     const currentYear = new Date().getFullYear();
 
     if (testStringYear >= currentYear) {
       return {
         qrCode,
-        status: "valid",
+        status: 'valid',
       };
     }
 
     if (testStringYear < currentYear) {
       return {
         qrCode,
-        status: "expired",
-        error: "Test strip expired",
+        status: 'expired',
+        error: 'Test strip expired',
       };
     }
 
     return {
-      status: "invalid",
-      error: "Unknown QR code error",
+      status: 'invalid',
+      error: 'Unknown QR code error',
     };
   } catch (error) {
     logger.error(`Error processing QR code: ${error}`);
     return {
-      status: "invalid",
-      error: "Error processing QR code",
+      status: 'invalid',
+      error: 'Error processing QR code',
     };
   }
 }

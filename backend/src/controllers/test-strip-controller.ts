@@ -1,19 +1,19 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { NotFoundError } from "../errors/not-found-error";
-import { BadRequestError } from "../errors/bad-request-error";
-import { processImage } from "../utils/image-processor";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { NotFoundError } from '../errors/not-found-error';
+import { BadRequestError } from '../errors/bad-request-error';
+import { processImage } from '../utils/image-processor';
 import {
   createTestStrip,
   findAllTestStrips,
   findTestStripById,
-} from "../models/test-strip-model";
+} from '../models/test-strip-model';
 
 export async function uploadTestStrip(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
-  if (!req.file) throw new BadRequestError("No image file provided");
+  if (!req.file) throw new BadRequestError('No image file provided');
 
   const processingResult = await processImage(req.file.path);
 
@@ -32,7 +32,7 @@ export async function uploadTestStrip(
 
 export async function getTestStrips(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
@@ -45,13 +45,13 @@ export async function getTestStrips(
 
 export async function getTestStripById(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { id } = req.params;
-  if (!id) throw new BadRequestError("id is required");
+  if (!id) throw new BadRequestError('id is required');
 
   const submission = await findTestStripById(id);
-  if (!submission) throw new NotFoundError("Test strip not found");
+  if (!submission) throw new NotFoundError('Test strip not found');
 
   res.json(submission);
 }

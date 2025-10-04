@@ -1,6 +1,6 @@
-import { Pool } from "pg";
-import { appConfig } from "../config";
-import { logger } from "../utils/logger";
+import { Pool } from 'pg';
+import { appConfig } from '../config';
+import { logger } from '../utils/logger';
 
 export const pool = new Pool({
   user: appConfig.postgres.user,
@@ -10,22 +10,22 @@ export const pool = new Pool({
   port: appConfig.postgres.port,
 });
 
-pool.on("remove", () => {
-  logger.info("Database client removed");
+pool.on('remove', () => {
+  logger.info('Database client removed');
 });
 
-pool.on("acquire", () => {
-  logger.info("Database connection acquired");
+pool.on('acquire', () => {
+  logger.info('Database connection acquired');
 });
 
-pool.on("connect", () => {
-  logger.info("Database connection established");
+pool.on('connect', () => {
+  logger.info('Database connection established');
 });
 
-pool.on("release", () => {
-  logger.info("Database connection released");
+pool.on('release', () => {
+  logger.info('Database connection released');
 });
 
-pool.on("error", (error: Error) => {
+pool.on('error', (error: Error) => {
   logger.error(`Database connection error ${error.message} ${error.stack}`);
 });
