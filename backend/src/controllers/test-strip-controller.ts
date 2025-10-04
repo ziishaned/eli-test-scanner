@@ -5,6 +5,7 @@ import {
   findAllTestStrips,
   findTestStripById,
 } from "../models/test-strip-model";
+import { appConfig } from "../config";
 
 export async function uploadTestStrip(
   req: Request,
@@ -39,10 +40,7 @@ export async function uploadTestStrip(
     res.status(500).json({
       error: "Internal server error during image processing",
       details:
-        process.env.NODE_ENV === "development" ||
-        process.env.NODE_ENV === "test"
-          ? error
-          : undefined,
+        appConfig.isDevelopment || appConfig.isTesting ? error : undefined,
     });
   }
 }
@@ -63,10 +61,7 @@ export async function getTestStrips(
     res.status(500).json({
       error: "Failed to fetch test strips",
       details:
-        process.env.NODE_ENV === "development" ||
-        process.env.NODE_ENV === "test"
-          ? error
-          : undefined,
+        appConfig.isDevelopment || appConfig.isTesting ? error : undefined,
     });
   }
 }
@@ -95,10 +90,7 @@ export async function getTestStripById(
     res.status(500).json({
       error: "Failed to fetch test strip",
       details:
-        process.env.NODE_ENV === "development" ||
-        process.env.NODE_ENV === "test"
-          ? error
-          : undefined,
+        appConfig.isDevelopment || appConfig.isTesting ? error : undefined,
     });
   }
 }

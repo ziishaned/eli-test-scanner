@@ -1,12 +1,13 @@
 import { Pool } from "pg";
 import { logger } from "./utils/logger";
+import { appConfig } from "./config";
 
 export const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || "", 10),
+  user: appConfig.postgres.user,
+  host: appConfig.postgres.host,
+  database: appConfig.postgres.database,
+  password: appConfig.postgres.password,
+  port: appConfig.postgres.port,
 });
 
 pool.on("remove", () => {
@@ -25,6 +26,6 @@ pool.on("release", () => {
   logger.info("Database connection released");
 });
 
-pool.on("error", (client) => {
-  logger.error(`Database connection error ${client.message}`);
+pool.on("error", (error: Error) => {
+  logger.error(`Database connection error ${error.message} ${error.stack}`);
 });
