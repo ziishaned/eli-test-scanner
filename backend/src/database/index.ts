@@ -2,13 +2,7 @@ import { Pool } from 'pg';
 import { appConfig } from '../config';
 import { logger } from '../utils/logger';
 
-export const pool = new Pool({
-  user: appConfig.postgres.user,
-  host: appConfig.postgres.host,
-  database: appConfig.postgres.database,
-  password: appConfig.postgres.password,
-  port: appConfig.postgres.port,
-});
+export const pool = new Pool(appConfig.postgres);
 
 pool.on('remove', () => {
   logger.info('Database client removed');

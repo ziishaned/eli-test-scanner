@@ -11,7 +11,7 @@ import {
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { eliCodeToLabelMap, statusLabelMap } from "../constants";
+import { eliCodeToLabelMap, statusLabelMap } from "../src/constants";
 import { StatusBar } from "expo-status-bar";
 import { formatDate, formatFileSize } from "../src/utils/formatters";
 import { getTestStripById, SubmissionData } from "../src/api/test-strips";

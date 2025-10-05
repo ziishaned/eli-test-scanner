@@ -7,6 +7,13 @@ module.exports = [
     files: ["**/*.{js,ts}"],
     languageOptions: {
       parser: typescriptParser,
+      globals: {
+        Buffer: "readonly",
+        process: "readonly",
+        module: "readonly",
+        require: "readonly",
+        __dirname: "readonly",
+      },
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
@@ -19,6 +26,7 @@ module.exports = [
     rules: {
       ...js.configs.recommended.rules,
 
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
 

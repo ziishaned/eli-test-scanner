@@ -12,5 +12,9 @@ export const appConfig: AppConfig = {
     database: process.env.DB_NAME ?? 'eli_test_strips',
     host: process.env.DB_HOST ?? 'localhost',
     port: Number(process.env.DB_PORT ?? 5432),
+    min: 5,
+    max: 20,
+    idleTimeoutMillis: 20000,
+    connectionTimeoutMillis: 30000,
   },
 };

@@ -12,7 +12,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
-import { eliCodeToLabelMap, statusLabelMap } from "../constants";
+import { eliCodeToLabelMap, statusLabelMap } from "../src/constants";
 import { formatDate } from "../src/utils/formatters";
 import { getTestStrips, SubmissionData } from "../src/api/test-strips";
 import { uploadsBaseURL } from "../src/api/client";

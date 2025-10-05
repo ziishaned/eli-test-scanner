@@ -1,3 +1,5 @@
+import {PoolConfig} from 'pg';
+
 export interface TestStripSubmission {
   id: string;
   qr_code?: string;
@@ -43,11 +45,5 @@ export type AppConfig = {
   port: number;
   uploadsDirPath: string;
   isDevelopment: boolean;
-  postgres: {
-    user: string;
-    password: string;
-    database: string;
-    host: string;
-    port: number;
-  };
+  postgres: PoolConfig;
 };

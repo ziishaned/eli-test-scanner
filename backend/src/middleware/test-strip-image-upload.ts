@@ -1,16 +1,15 @@
-import { Express } from "express";
-import path from "path";
-import multer, { FileFilterCallback } from "multer";
-import { Request } from "express";
-import { randomUUID } from "crypto";
-import { appConfig } from "../config";
-import { BadRequestError } from "../errors/bad-request-error";
+import path from 'path';
+import multer, { FileFilterCallback } from 'multer';
+import { Request, Express } from 'express';
+import { randomUUID } from 'crypto';
+import { appConfig } from '../config';
+import { BadRequestError } from '../errors/bad-request-error';
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
     cb(null, appConfig.uploadsDirPath);
   },
-  filename: (req: Request, file, cb) => {
+  filename: (req: Request, file: Express.Multer.File, cb) => {
     const uniqueName = `${randomUUID()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
   },
@@ -21,12 +20,12 @@ function fileFilter(
   file: Express.Multer.File,
   cb: FileFilterCallback
 ) {
-  const allowedMimes = ["image/jpeg", "image/jpg", "image/png"];
+  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
 
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    throw new BadRequestError("Invalid file type");
+    throw new BadRequestError('Invalid file type');
   }
 }
 

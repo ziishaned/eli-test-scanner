@@ -1,7 +1,6 @@
 import pino from 'pino';
+import { appConfig } from '../config';
 
 export const logger = pino({
-  transport: {
-    target: 'pino-pretty',
-  },
+  transport: appConfig.isDevelopment ? { target: 'pino-pretty' } : undefined,
 });
